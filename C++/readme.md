@@ -109,7 +109,7 @@ int main() {
 * 友元声明的形式及数量不受限制
 
 ### static_cas和dynamic_cast
-使用方式：
+转换方式：
 static_cast<new_type>(expression)
 
 其中，new_type为目标数据类型，expression为原始数据类型变量或者表达式。
@@ -117,8 +117,8 @@ static_cast相当于传统的C语言里的强制转换，该运算符把expressi
 
 主要有如下几种用法：
 1. 用于类层次结构中基类和派生类之间指针或引用的转换
-    * 进行上行转换（把派生类的指针或引用转换成基类表示）是安全的；
-    * 进行下行转换（把基类的指针或引用转换成派生类表示）是不安全的，因为没有动态类型检查；
+* 进行上行转换（把派生类的指针或引用转换成基类表示）是安全的；
+* 进行下行转换（把基类的指针或引用转换成派生类表示）是不安全的，因为没有动态类型检查；
 2. 用于基本数据类型之间的转换，如把int转换成char，把int转换成enum
 3. 把空指针转换成目标类型的空指针
 4. 把任何类型的表达式转换成void类型
@@ -157,5 +157,54 @@ if(Base* pB = static_cast<Base*>(pD))
 ```
 
 ### dynamic_cast
-使用方式：
-dynamic_cast<new_type>(expression)
+转换方式：
+dynamic_cast<type*>(expression)
+type必须是一个类类型且必须是一个有效的指针
+dynamic_cast<type&>(expression)
+type必须是一个类类型且必须是一个左值
+dynamic_cast<type&&>(expression)
+type必须是一个类类型且必须是一个右值
+
+expression的类型必须符合以下三个条件中的任何一个：
+1. expression的类型是目标type的公有派生类
+2. expression的类型是目标type的公有基类
+3. expression的类型是目标type的类型
+
+如果一条dynamic_cast语句的转换目标是指针类型并且失败了，则结果为0。如果转换目标是引用类型并且失败了，则dynamic_cast运算符将抛出一个std::bad_cast异常（该异常定义在typeinfo标准库头文件中）。expression也可以是一个空指针，结果是所需类型的空指针。
+
+dynamic_cast主要用于类层次间的上行转换和下行转换，还可以用于类之间的交叉转换（cross cast）。
+
+* 在类层次间进行上行转换时，dynamic_cast和static_cast的效果是一样的；
+* 在进行下行转换时，dynamic_cast具有类型检查的功能，比static_cast更安全；
+dynamic_cast是唯一无法由旧式语法执行的动作，也是唯一可能耗费重大运行成本的转型动作
+
+* 指针类型
+举例，Base为包含至少一个虚函数的基类，Derived是Base的公有派生类，如果有一个指向Base的指针bp，我们可以在运行时将它转换成指向Derived的指针，代码如下：
+```
+if(Derived *dp = dynamic_cast<Derived *>(bp)){
+  //使用dp指向的Derived对象  
+}
+else{
+  //使用bp指向的Base对象  
+}
+```
+值得注意的是，在上述代码中，if语句中定义了dp，这样做的好处是可以在一个操作中同时完成类型转换和条件检查两项任务。
+
+* 引用类型
+因为不存在所谓空引用，所以引用类型的dynamic_cast转换与指针类型不同，在引用转换失败时，会抛出std::bad_cast异常，该异常定义在头文件typeinfo中。
+```
+void f(const Base &b){
+ try{
+   const Derived &d = dynamic_cast<const Base &>(b);  
+   //使用b引用的Derived对象
+ }
+ catch(std::bad_cast){
+   //处理类型转换失败的情况
+ }
+}
+```
+
+*尽量少使用转型操作，尤其是dynamic_cast，耗时较高，会导致性能的下降，尽量使用其他方法替代。*
+
+
+

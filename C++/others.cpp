@@ -301,7 +301,7 @@ public:
         // cout << typeid(g).name() << endl;
         // cout << typeid(h).name() << endl;
 
-        // 类的上行和下行举例
+        // 类的上行和下行转换举例
         Base *pB = new Base();
         cout << typeid(pB).name() << endl;
         if (Derived *pD = static_cast<Derived *>(pB))

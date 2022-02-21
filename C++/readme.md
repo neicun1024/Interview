@@ -111,16 +111,20 @@ int main() {
 ### static_cas和dynamic_cast
 使用方式：
 static_cast<new_type>(expression)
+
 其中，new_type为目标数据类型，expression为原始数据类型变量或者表达式。
-static_cast相当于传统的C语言里的强制转换，该运算符把expression转换为new_type类型，用来强迫隐式转换如non-const对象转为const对象，编译时检查，用于非多态的转换，可以转换指针及其他，但没有运行时类型检查来保证转换的安全性。主要有如下几种用法：
-    1. 用于类层次结构中基类和派生类之间指针或引用的转换
+static_cast相当于传统的C语言里的强制转换，该运算符把expression转换为new_type类型，用来强迫隐式转换如non-const对象转为const对象，编译时检查，用于非多态的转换，可以转换指针及其他，但没有运行时类型检查来保证转换的安全性。
+
+主要有如下几种用法：
+1. 用于类层次结构中基类和派生类之间指针或引用的转换
     * 进行上行转换（把派生类的指针或引用转换成基类表示）是安全的；
     * 进行下行转换（把基类的指针或引用转换成派生类表示）是不安全的，因为没有动态类型检查；
-    2. 用于基本数据类型之间的转换，如把int转换成char，把int转换成enum
-    3. 把空指针转换成目标类型的空指针
-    4. 把任何类型的表达式转换成void类型
-    注意：static_cast不能转换掉expression的const、volatile、或者__unaligned属性
+2. 用于基本数据类型之间的转换，如把int转换成char，把int转换成enum
+3. 把空指针转换成目标类型的空指针
+4. 把任何类型的表达式转换成void类型
+注意：static_cast不能转换掉expression的const、volatile、或者__unaligned属性
 
+基本类型数据转换举例
 ```
 char a = 'a';
 int b = static_cast<int>(a);//正确，将char型数据转换成int型数据
@@ -135,6 +139,7 @@ const int g = 20;
 int *h = static_cast<int*>(&g);//编译错误，static_cast不能转换掉g的const属性
 ```
 
+类的上行和下行转换举例
 ```
 class Base
 {};

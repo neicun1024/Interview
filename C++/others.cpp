@@ -167,14 +167,16 @@ private:
     struct Test1
     {
         int val = 1;
-        void printVal(){
+        void printVal()
+        {
             cout << val << endl;
         }
     };
     typedef struct Test2
     {
         int val = 2;
-        void printVal(){
+        void printVal()
+        {
             cout << val << endl;
         }
     } T2;
@@ -203,6 +205,126 @@ public:
     }
 };
 
+class ExplicitTest
+{
+private:
+    struct A
+    {
+        A(int) {}
+        operator bool() const { return true; }
+    };
+
+    struct B
+    {
+        explicit B(int) {}
+        explicit operator bool() const { return true; }
+    };
+
+    void doA(A a) {}
+
+    void doB(B b) {}
+
+public:
+    // void myPrint()
+    // {
+    //     A a1(1);     // OK：直接初始化
+    //     A a2 = 1;    // OK：复制初始化
+    //     A a3{1};     // OK：直接列表初始化
+    //     A a4 = {1};  // OK：复制列表初始化
+    //     A a5 = (A)1; // OK：允许 static_cast 的显式转换
+    //     doA(1);      // OK：允许从 int 到 A 的隐式转换
+    //     if(a1);                          // OK：使用转换函数 A::operator bool() 的从 A 到 bool 的隐式转换
+    //     bool a6(a1);                     // OK：使用转换函数 A::operator bool() 的从 A 到 bool 的隐式转换
+    //     bool a7 = a1;                    // OK：使用转换函数 A::operator bool() 的从 A 到 bool 的隐式转换
+    //     bool a8 = static_cast<bool>(a1); // OK ：static_cast 进行直接初始化
+
+    //     B b1(1);     // OK：直接初始化
+    //     B b2 = 1;    // 错误：被 explicit 修饰构造函数的对象不可以复制初始化
+    //     B b3{1};     // OK：直接列表初始化
+    //     B b4 = {1};  // 错误：被 explicit 修饰构造函数的对象不可以复制列表初始化
+    //     B b5 = (B)1; // OK：允许 static_cast 的显式转换
+    //     doB(1);      // 错误：被 explicit 修饰构造函数的对象不可以从 int 到 B 的隐式转换
+    //     if(b1);                          // OK：被 explicit 修饰转换函数 B::operator bool() 的对象可以从 B 到 bool 的按语境转换
+    //     bool b6(b1);                     // OK：被 explicit 修饰转换函数 B::operator bool() 的对象可以从 B 到 bool 的按语境转换
+    //     bool b7 = b1;                    // 错误：被 explicit 修饰转换函数 B::operator bool() 的对象不可以隐式转换
+    //     bool b8 = static_cast<bool>(b1); // OK：static_cast 进行直接初始化
+    // }
+};
+
+class RemoveReference // remove_reference的作用是解除引用
+{
+public:
+    void myPrint()
+    {
+        int a[] = {1, 2, 3};
+        decltype(*a) b = a[0];
+        remove_reference<decltype(*a)>::type c = a[0];
+        a[0] = 4;
+        cout << b << endl;
+        cout << c << endl;
+    }
+};
+
+class StaticCast // static_cast
+{
+private:
+    class Base
+    {
+    };
+
+    class Derived : public Base
+    {
+    };
+
+public:
+    void myPrint()
+    {
+        // 基本类型数据转换举例
+        char a = 'a';
+        int b = static_cast<int>(a); //正确，将char型数据转换成int型数据
+
+        double *c = new double;
+        void *d = static_cast<void *>(c); //正确，将double指针转换成void指针
+
+        int e = 10;
+        const int f = static_cast<const int>(e); //正确，将int型数据转换成const int型数据
+
+        // const int g = 20;
+        // int *h = static_cast<int *>(&g); //编译错误，static_cast不能转换掉g的const属性
+
+        cout << typeid(a).name() << endl;
+        cout << typeid(b).name() << endl;
+        cout << typeid(c).name() << endl;
+        cout << typeid(d).name() << endl;
+        cout << typeid(e).name() << endl;
+        cout << typeid(f).name() << endl;
+        // cout << typeid(g).name() << endl;
+        // cout << typeid(h).name() << endl;
+
+        // 类的上行和下行举例
+        Base *pB = new Base();
+        cout << typeid(pB).name() << endl;
+        if (Derived *pD = static_cast<Derived *>(pB))
+        {
+            cout << typeid(pD).name() << endl;
+        } //下行转换是不安全的(坚决抵制这种方法)
+
+        Derived *pD = new Derived();
+        cout << typeid(pD).name() << endl;
+        if (Base *pB = static_cast<Base *>(pD))
+        {
+            cout << typeid(pB).name() << endl;
+        } //上行转换是安全的
+
+        cout << typeid(pB).name() << endl;
+        cout << typeid(pD).name() << endl;
+    }
+};
+
+class DynamicCast // dynamic_cast
+{
+};
+
 int main()
 {
     // ConstTest constTest;
@@ -219,6 +341,15 @@ int main()
 
     // StructTest structTest;
     // structTest.myPrint();
+
+    // ExplicitTest explicitTest;
+    // explicitTest.myPrint();
+
+    // RemoveReference removeReference;
+    // removeReference.myPrint();
+
+    StaticCast staticCast;
+    staticCast.myPrint();
 
     return 0;
 }

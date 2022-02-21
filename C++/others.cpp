@@ -1,14 +1,14 @@
 #include <iostream>
 using namespace std;
 
-class Const // 类中const变量需要在类内声明时初始化或在初始化列表中初始化
+class ConstTest // 类中const变量需要在类内声明时初始化或在初始化列表中初始化
 {
 private:
     const int val = 1;
 
 public:
-    Const() : val(2){};
-    Const(int x) : val(x){};
+    ConstTest() : val(2){};
+    ConstTest(int x) : val(x){};
 
     int getValue()
     {
@@ -21,9 +21,9 @@ public:
 
     void myPrint()
     {
-        Const c1;
+        ConstTest c1;
         cout << c1.getValue() << endl;
-        Const c2(3);
+        ConstTest c2(3);
         cout << c2.getValue() << endl;
     }
 };
@@ -71,7 +71,7 @@ public:
     }
 };
 
-class Pragma // 设定结构体、联合以及类成员变量以 n 字节方式对齐
+class PragmaTest // 设定结构体、联合以及类成员变量以 n 字节方式对齐
 {
 private:
 #pragma pack(push) // 保存对齐状态
@@ -161,21 +161,64 @@ public:
     }
 };
 
+class StructTest // struct和typedef struct
+{
+private:
+    struct Test1
+    {
+        int val = 1;
+        void printVal(){
+            cout << val << endl;
+        }
+    };
+    typedef struct Test2
+    {
+        int val = 2;
+        void printVal(){
+            cout << val << endl;
+        }
+    } T2;
+
+    void Test1() // 当定义了和结构体Test1同名的函数后，Test1只能表示函数，要使用结构体时需要在前面加上"struct"
+    {
+        cout << "function Test1" << endl;
+    }
+    void Test2()
+    {
+        cout << "function Test2" << endl;
+    }
+    // void T2() // T2已经被定义成一个“struct Test2”的别名了，不能再定义为函数名
+    // {
+    //     cout << "function T1" << endl;
+    // } // error: 'void Struct::T2()' conflicts with a previous declaration
+
+public:
+    void myPrint()
+    {
+        Test1(); // function Test1
+        struct Test1 test1;
+        test1.printVal(); // 1
+        T2 t2;
+        t2.printVal(); // 2
+    }
+};
+
 int main()
 {
-    // Const _const;
-    // _const.myPrint();
+    // ConstTest constTest;
+    // constTest.myPrint();
 
     // InlineVirtual inlineVirtual;
     // inlineVirtual.myPrint();
 
-    // Pragma pragma;
-    // pragma.myPrint();
+    // PragmaTest pragmaTest;
+    // pragmaTest.myPrint();
 
     // BitMode bitMode;
     // bitMode.myPrint();
 
-    
+    // StructTest structTest;
+    // structTest.myPrint();
 
     return 0;
 }

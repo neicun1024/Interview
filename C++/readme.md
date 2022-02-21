@@ -6,12 +6,12 @@
 
 ### assert()
 断言，是宏，而非函数。可以使用NDEBUG来关闭assert，但是需要在源代码的开头，在include<assert.h>之前
-```
+~~~~
 #define NDEBUG          // 加上这行，则 assert 不可用
 #include <assert.h>
 
 assert( p != NULL );    // assert 不可用
-```
+~~~~
 
 ### #pragma pack(n)
 设定结构体、联合(Union)以及类成员变量以n字节方式对齐
@@ -27,3 +27,9 @@ struct test
 };
 
 #pragma pack(pop)   // 恢复对齐状态
+```
+
+### extern "C"
+* 被extern限定的函数或变量是extern类型的
+* 被extern "C"修饰的变量和函数是按照C语言方式编译和链接的
+

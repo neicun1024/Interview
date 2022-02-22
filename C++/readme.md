@@ -179,6 +179,7 @@ dynamic_cast主要用于类层次间的上行转换和下行转换，还可以�
 dynamic_cast是唯一无法由旧式语法执行的动作，也是唯一可能耗费重大运行成本的转型动作
 
 * 指针类型
+
 举例，Base为包含至少一个虚函数的基类，Derived是Base的公有派生类，如果有一个指向Base的指针bp，我们可以在运行时将它转换成指向Derived的指针，代码如下：
 ```
 if(Derived *dp = dynamic_cast<Derived *>(bp)){
@@ -191,16 +192,17 @@ else{
 值得注意的是，在上述代码中，if语句中定义了dp，这样做的好处是可以在一个操作中同时完成类型转换和条件检查两项任务。
 
 * 引用类型
+
 因为不存在所谓空引用，所以引用类型的dynamic_cast转换与指针类型不同，在引用转换失败时，会抛出std::bad_cast异常，该异常定义在头文件typeinfo中。
 ```
 void f(const Base &b){
- try{
-   const Derived &d = dynamic_cast<const Base &>(b);  
-   //使用b引用的Derived对象
- }
- catch(std::bad_cast){
-   //处理类型转换失败的情况
- }
+    try{
+        const Derived &d = dynamic_cast<const Base &>(b);  
+        //使用b引用的Derived对象
+    }
+        catch(std::bad_cast){
+        //处理类型转换失败的情况
+    }
 }
 ```
 

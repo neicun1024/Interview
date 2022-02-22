@@ -323,6 +323,37 @@ public:
 
 class DynamicCast // dynamic_cast
 {
+private:
+    class Base
+    {
+        virtual void doSomething() {} // 基类至少包含一个虚函数
+    };
+
+    class Derived : public Base
+    {
+    };
+
+    // void f(const Base &b){
+    //     try{
+    //         const Derived &d = dynamic_cast<const Base &>(b);
+    //         //使用b引用的Derived对象
+    //     }
+    //     catch(exception e){
+    //         //处理类型转换失败的情况
+    //     }
+    // }
+public:
+    void myPrint()
+    {
+        // 指针类型
+        Base *pB = new Base();
+        Derived *pD = dynamic_cast<Derived *>(pB);
+        cout << typeid(pD).name() << endl;
+
+        // 引用类型
+        // Base b;
+        // f(b);
+    }
 };
 
 int main()
@@ -348,8 +379,13 @@ int main()
     // RemoveReference removeReference;
     // removeReference.myPrint();
 
-    StaticCast staticCast;
-    staticCast.myPrint();
+    // StaticCast staticCast;
+    // staticCast.myPrint();
+
+    // DynamicCast dynamicCast;
+    // dynamicCast.myPrint();
+
+    
 
     return 0;
 }

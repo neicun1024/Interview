@@ -180,7 +180,7 @@ dynamic_cast是唯一无法由旧式语法执行的动作，也是唯一可能�
 
 * 指针类型
 
-举例，Base为包含至少一个虚函数的基类，Derived是Base的公有派生类，如果有一个指向Base的指针bp，我们可以在运行时将它转换成指向Derived的指针，代码如下：
+举例，Base为**包含至少一个虚函数**的基类，Derived是Base的公有派生类，如果有一个指向Base的指针bp，我们可以在运行时将它转换成指向Derived的指针，代码如下：
 ```
 if(Derived *dp = dynamic_cast<Derived *>(bp)){
   //使用dp指向的Derived对象  
@@ -197,7 +197,7 @@ else{
 ```
 void f(const Base &b){
     try{
-        const Derived &d = dynamic_cast<const Base &>(b);  
+        const Derived &d = dynamic_cast<const Base &>(b); // 这里会报错，try catch无法捕获到，在下一条《异常处理》中会讲原因
         //使用b引用的Derived对象
     }
         catch(std::bad_cast){
@@ -208,5 +208,138 @@ void f(const Base &b){
 
 *尽量少使用转型操作，尤其是dynamic_cast，耗时较高，会导致性能的下降，尽量使用其他方法替代。*
 
+### 异常处理
+程序的错误大致可分为三种，分别是语法错误、逻辑错误和运行时错误
+* 语法错误：在编译和链接阶段就能发现，只有 100% 符合语法规则的代码才能生成可执行程序。语法错误是最容易发现、最容易定位、最容易排除的错误，程序员最不需要担心的就是这种错误
+* 逻辑错误：编写的代码思路有问题，不能够达到最终的目标，这种错误可以通过调试来解决
+* 运行时错误：指程序在运行期间发生的错误，例如除数为 0、内存分配失败、数组越界、文件不存在等。C++ 异常（Exception）机制就是为解决运行时错误而引入的
 
+### 左值引用和右值引用
+右值引用可实现转移语义（Move Sementics）和精确传递（Perfect Forwarding），它的主要目的有两个方面：
+* 消除两个对象交互时不必要的对象拷贝，节省运算存储资源，提高效率
+* 能够更简洁明确地定义泛型函数
+
+引用折叠
+* type& &、type& &&、type&& & 可折叠成 type&
+* type&& && 可折叠成 type&&
+
+### 成员初始化列表
+* C++规定，对象的成员变量的初始化动作发生在进入构造函数本体之前，比如在进入InitializerList的构造函数本体之前，会先初始化a和b，在进入InitializerList的构造函数本体后，**a=3;**和**b=4;**会调用对应的构造函数来创建临时对象，并将值赋给a和b，随后将临时对象析构；
+* 如果InitializerList的构造函数的初始化列表中没有给成员变量初始化，那么会调用其默认构造函数，比如InitializerList的构造函数的初始化列表没有初始化a，所以会调用a的默认构造函数，而初始化了b，所以会调用b对应的构造函数（*这里如果不给b初始化会报错，因为我将B的默认构造函数delete了*）；
+* 直接在成员初始化列表中赋值而不是在InitializerList的构造函数本体中赋值，能减少一次构造函数的调用，从而减少开销
+
+```
+class InitializerList
+{
+private:
+    class A
+    {
+    private:
+        int val;
+
+    public:
+        A()
+        {
+            cout << "default constructor of A" << endl;
+            myPrint();
+        };
+        A(int tmp)
+        {
+            val = tmp;
+            cout << "constructor of A" << endl;
+            myPrint();
+        }
+        ~A()
+        {
+            cout << "destructor of A" << endl;
+        };
+
+        void myPrint()
+        {
+            cout << "val = " << val << endl;
+        }
+    };
+
+    class B
+    {
+    private:
+        int val;
+
+    public:
+        B() = delete;
+        B(int tmp)
+        {
+            val = tmp;
+            cout << "constructor of B" << endl;
+            myPrint();
+        }
+        ~B()
+        {
+            cout << "destructor of B" << endl;
+        };
+
+        void myPrint()
+        {
+            cout << "val = " << val << endl;
+        }
+    };
+
+    A a;
+    B b;
+
+public:
+    InitializerList() : b(2) // 初始化列表里没初始化a，所以会调用a的默认构造函数
+    {
+        a = 3;
+        b = 4;
+        cout << "constructor of InitializerList" << endl;
+        a.myPrint();
+        b.myPrint();
+    }
+
+    ~InitializerList()
+    {
+        cout << "destructor of InitializerList" << endl;
+    }
+};
+
+int main()
+{
+    InitializerList initializerList;
+    return 0;
+｝
+```
+
+以上代码的运行结果为
+```
+default constructor of A
+val = 36
+constructor of B
+val = 2
+constructor of A
+val = 3
+destructor of A
+constructor of B
+val = 4
+destructor of B
+constructor of InitializerList
+val = 3
+val = 4
+destructor of InitializerList
+destructor of B
+destructor of A
+```
+
+有些场合必须要用初始化列表：
+* 常量成员，因为常量只能初始化不能赋值，所以必须放在初始化列表里面
+* 引用类型， 引用必须在定义时初始化，并且不能重新赋值，所以也要写在初始化列表里面
+* 没有默认构造函数的类，比如上面例子中的b，通过使用初始化列表来避免调用默认构造函数
+
+### 多态的分类及实现
+* 重载多态（编译期）：函数重现、运算符重载
+* 子类型多态（运行期）：虚函数
+* 参数多态性（编译器）：类模板、函数模板
+* 强制多态（编译期/运行期）：基本类型转换、自定义类型转换
+
+### 
 

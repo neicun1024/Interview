@@ -335,10 +335,10 @@ private:
 
     // void f(const Base &b){
     //     try{
-    //         const Derived &d = dynamic_cast<const Base &>(b);
+    //         const Derived &d = dynamic_cast<const Base &>(b); // 这里会报错，try catch无法捕获到，因为不是运行时错误
     //         //使用b引用的Derived对象
     //     }
-    //     catch(exception e){
+    //     catch(std::bad_cast){
     //         //处理类型转换失败的情况
     //     }
     // }
@@ -353,6 +353,118 @@ public:
         // 引用类型
         // Base b;
         // f(b);
+    }
+};
+
+class ReferenceTest // 左值引用和右值引用
+{
+private:
+    template <typename T>
+    void f(T &t)
+    {
+        cout << "Now is in f(T& t)" << endl;
+        cout << typeid(t).name() << endl;
+    }
+
+    template <typename T>
+    void f(T &&t)
+    {
+        cout << "Now is in f(T&& t)" << endl;
+        cout << typeid(t).name() << endl;
+    }
+
+public:
+    void myPrint()
+    {
+        int a = 1;
+        f<int>(1);
+        f<int>(a);
+        f<int>(move(a));
+
+        // f<int&>(1);         // 此时两个函数都变为左值引用，无法匹配
+        f<int &>(a); // 调用void f(T &&t)，相当于void f(int& &t)，左值引用
+        // f<int&>(move(a));   // 此时两个函数都变为左值引用，无法匹配
+
+        f<int &&>(1);       // 调用void f(T &&t)，相当于void f(int&& &&t)，右值引用
+        f<int &&>(a);       // 调用void f(T &&t)，相当于void f(int&& &t)，左值引用
+        f<int &&>(move(a)); // 调用void f(T &&t)，相当于void f(int&& &&t)，右值引用
+
+        // 所有右值引用折叠到右值引用上仍然是一个右值引用
+        // 所有的其他引用类型之间的折叠都将变成左值引用
+    }
+};
+
+class InitializerList
+{
+private:
+    class A
+    {
+    private:
+        int val;
+
+    public:
+        A()
+        {
+            cout << "default constructor of A" << endl;
+            myPrint();
+        };
+        A(int tmp)
+        {
+            val = tmp;
+            cout << "constructor of A" << endl;
+            myPrint();
+        }
+        ~A()
+        {
+            cout << "destructor of A" << endl;
+        };
+
+        void myPrint()
+        {
+            cout << "val = " << val << endl;
+        }
+    };
+
+    class B
+    {
+    private:
+        int val;
+
+    public:
+        B() = delete;
+        B(int tmp)
+        {
+            val = tmp;
+            cout << "constructor of B" << endl;
+            myPrint();
+        }
+        ~B()
+        {
+            cout << "destructor of B" << endl;
+        };
+
+        void myPrint()
+        {
+            cout << "val = " << val << endl;
+        }
+    };
+
+    A a;
+    B b;
+
+public:
+    InitializerList() : b(2) // 初始化列表里没初始化a，所以会调用a的默认构造函数
+    {
+        a = 3;
+        b = 4;
+        cout << "constructor of InitializerList" << endl;
+        a.myPrint();
+        b.myPrint();
+    }
+
+    ~InitializerList()
+    {
+        cout << "destructor of InitializerList" << endl;
     }
 };
 
@@ -385,7 +497,9 @@ int main()
     // DynamicCast dynamicCast;
     // dynamicCast.myPrint();
 
-    
+    // ReferenceTest referenceTest;
+    // referenceTest.myPrint();
 
+    InitializerList initializerList;
     return 0;
 }

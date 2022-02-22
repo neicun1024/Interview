@@ -108,7 +108,7 @@ int main() {
 * 友元关系的单向性
 * 友元声明的形式及数量不受限制
 
-### static_cas和dynamic_cast
+### static_cas
 转换方式：
 static_cast<new_type>(expression)
 
@@ -411,4 +411,6 @@ new (place_address) type [size] { braced initializer list }
 
 #### 只能在栈上
 * 方法：将 operator new() 设置为私有
-    原因：当对象建立在堆上时，是采用 new 的方式进行建立，其底层会调用 operator new() 函数，因此只要对该函数加以限制，就能够防止对象建立在堆上。
+    原因：
+    * 当对象建立在堆上时，是采用 new 的方式进行建立，其底层会调用 operator new() 函数，因此只要对该函数加以限制，就能够防止对象建立在堆上。
+

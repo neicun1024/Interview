@@ -575,8 +575,8 @@ int main()
 
     // InitializerList initializerList;
 
-    MapTest myTest;
-    myTest.myPrint();
+    // MapTest myTest;
+    // myTest.myPrint();
 
     return 0;
 }

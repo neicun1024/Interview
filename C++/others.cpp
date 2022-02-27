@@ -1,4 +1,4 @@
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
 class ConstTest // 类中const变量需要在类内声明时初始化或在初始化列表中初始化
@@ -468,6 +468,79 @@ public:
     }
 };
 
+class MapTest // Map读取未保存的数会发生什么？
+{
+private:
+    map<int, int> i2i;
+    map<int, char> i2c;
+    map<int, string> i2s;
+
+    void printInterval(int n)
+    {
+        for (int i = 0; i < n; ++i)
+        {
+            cout << "-";
+        }
+        cout << endl;
+    }
+
+public:
+    void myPrint()
+    {
+        cout << ">>MapTest" << endl;
+        i2i[0] = 1;
+        for (map<int, int>::iterator iter = i2i.begin(); iter != i2i.end(); ++iter)
+        {
+            cout << iter->first << " " << iter->second << endl;
+        }
+        printInterval(10);
+        cout << i2i[1] << endl; // 不会报错，会返回默认值0
+        printInterval(10);
+        for (map<int, int>::iterator iter = i2i.begin(); iter != i2i.end(); ++iter)
+        {
+            cout << iter->first << " " << iter->second << endl;
+        }
+        printInterval(20);
+
+        i2s[0] = "neicun";
+
+        for (map<int, string>::iterator iter = i2s.begin(); iter != i2s.end(); ++iter)
+        {
+            cout << iter->first << " " << iter->second << endl;
+        }
+        printInterval(10);
+        cout << i2s[1] << endl; // 不会报错，会返回默认值""
+        printInterval(10);
+        for (map<int, string>::iterator iter = i2s.begin(); iter != i2s.end(); ++iter)
+        {
+            cout << iter->first << " " << iter->second << endl;
+        }
+        printInterval(20);
+
+        i2c[0] = 'a';
+        for (map<int, char>::iterator iter = i2c.begin(); iter != i2c.end(); ++iter)
+        {
+            cout << iter->first << " " << iter->second << endl;
+        }
+        printInterval(10);
+        try
+        {
+            cout << i2c[1] << endl; // 程序直接结束，捕获不到异常
+        }
+        catch (exception e)
+        {
+            cout << "error" << endl;
+        }
+        printInterval(10);
+        for (map<int, char>::iterator iter = i2c.begin(); iter != i2c.end(); ++iter)
+        {
+            cout << iter->first << " " << iter->second << endl;
+        }
+
+        cout << "MapTest>>" << endl;
+    }
+};
+
 int main()
 {
     // ConstTest constTest;
@@ -502,6 +575,8 @@ int main()
 
     // InitializerList initializerList;
 
-    
+    MapTest myTest;
+    myTest.myPrint();
+
     return 0;
 }

@@ -108,7 +108,7 @@ int main() {
 * 友元关系的单向性
 * 友元声明的形式及数量不受限制
 
-### static_cas
+### static_cast
 转换方式：
 static_cast<new_type>(expression)
 
@@ -447,4 +447,6 @@ new (place_address) type [size] { braced initializer list }
 2. **inline 函数无法随着函数库升级而升级。inline函数的改变需要重新编译，不像 non-inline 可以直接链接**
 3. **是否内联，程序员不可控。内联函数只是对编译器的建议，是否对函数内联，决定权在于编译器**
 
+
+### ++i和i++的区别
 

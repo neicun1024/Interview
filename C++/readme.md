@@ -122,7 +122,8 @@ static_cast相当于传统的C语言里的强制转换，该运算符把expressi
 2. 用于基本数据类型之间的转换，如把int转换成char，把int转换成enum
 3. 把空指针转换成目标类型的空指针
 4. 把任何类型的表达式转换成void类型
-注意：static_cast不能转换掉expression的const、volatile、或者__unaligned属性
+
+注意：*static_cast不能转换掉expression的const、volatile、或者__unaligned属性*
 
 基本类型数据转换举例
 ```

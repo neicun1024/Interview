@@ -159,12 +159,14 @@ if(Base* pB = static_cast<Base*>(pD))
 
 ### dynamic_cast
 转换方式：
-dynamic_cast<type*>(expression)
-type必须是一个类类型且必须是一个有效的指针
-dynamic_cast<type&>(expression)
-type必须是一个类类型且必须是一个左值
-dynamic_cast<type&&>(expression)
-type必须是一个类类型且必须是一个右值
+- dynamic_cast<type*>(expression)
+    - type必须是一个类类型且必须是一个有效的指针
+
+- dynamic_cast<type&>(expression)
+    - type必须是一个类类型且必须是一个左值
+
+- dynamic_cast<type&&>(expression)
+    - type必须是一个类类型且必须是一个右值
 
 expression的类型必须符合以下三个条件中的任何一个：
 1. expression的类型是目标type的公有派生类

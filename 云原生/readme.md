@@ -38,3 +38,12 @@
   - Kubelet主要负责监视指派到它所在Node上的Pod，包括创建、修改、监控、删除等
   - Kube-proxy主要负责为Pod对象提供代理
   - Fluentd主要负责日志收集、存储与查询
+
+
+#### Kubernetes集群
+
+- Kubernetes协调一个高可用计算机集群，每个计算机作为独立单元互相连接工作
+- Kubernetes以更高效的方式跨集群自动分发和调度应用容器
+- 一个Kubernetes集群包含两种类型的资源：Master调度整个集群、Nodes负责运行应用
+
+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

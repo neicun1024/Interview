@@ -20,6 +20,8 @@
 - 虚拟机：在物理硬件虚拟成多套硬件后，需要在每套硬件上都部署一个操作系统，接着在这些操作系统上运行相应的应用程序
 - 缺点：占用空间大、启动慢、虚拟机软件可能收费
 
+![20220306181121](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220306181121.png)
+
 #### Docker
 
 [什么是Docker？生动形象的解释](https://blog.51cto.com/liangchaoxi/4052471?b=totalstatistic)
@@ -28,6 +30,7 @@
 
 
 #### K8S
+[Kubernetes官方介绍](https://kubernetes.io/zh/docs/concepts/overview/what-is-kubernetes/)
 
 - Kubernetes用于管理这些应用程序所在的小运行环境（容器）
 - 一个K8S系统，通常称为一个K8S集群，包括一个Master节点（主节点）和一群Node节点（计算节点）
@@ -48,3 +51,5 @@
 
 ![20220306132945](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220306132945.png)
 
+- Master负责管理整个集群。Master协调集群中的所有活动，例如调度应用、维护应用的所需状态、应用扩容以及推出新的更新
+- Node是一个虚拟机或者物理机，它在Kubernetes集群中充当工作机器的角色。每个Node都有Kubelet，

@@ -46,4 +46,3 @@
 - Kubernetes以更高效的方式跨集群自动分发和调度应用容器
 - 一个Kubernetes集群包含两种类型的资源：Master调度整个集群、Nodes负责运行应用
 
-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

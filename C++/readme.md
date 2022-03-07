@@ -452,4 +452,109 @@ new (place_address) type [size] { braced initializer list }
 
 
 ### ++i和i++的区别
+- 对于基本类型
+- 对于自定义类型
 
+
+### lambda表达式
+lambda表达式是C++11中最重要也最常用的特性之一，用于定义匿名函数，并且可以捕获一定范围内的变量
+
+语法形式： \[capture](params)opt->ret{body;};
+
+其中capture是捕获列表，params是参数表，opt是函数选项，ret是返回值类型，body是函数体；
+
+#### 优点
+- 声明式编程风格：就地匿名定义目标函数或函数对象，不需要额外写一个命名函数或者函数对象。以更直接的方式去写程序，好的可读性和可维护性
+- 简洁：不需要额外再写一个函数或者函数对象，避免了代码膨胀和功能分散
+- 在需要的时间和地点实现功能闭包，使程序更灵活
+
+
+#### lambda表达式的各个部分
+- capture子句
+- 参数列表（选）
+- 可变规范（选）
+- exception-specification（选）
+- trailing-return-type（选）
+- lambda
+
+#### 使用lambda表达式捕获列表
+- [] 不捕获任何变量
+- [&] 捕获外部作用域中所有变量，并作为引用在函数体中使用（按引用捕获）
+- [=] 捕获外部作用于中所有变量，并作为副本在函数体中使用（按值捕获）
+- [=, &foo] 按值捕获外部作用于中所有变量，并按引用捕获foo变量
+- [bar] 按值捕获bar变量，同时不捕获其它变量
+- [this] 捕获当前类中的this指针，让lambda表达式拥有和当前类成员函数同样的访问权限。如果已经使用了&或=，就默认添加此选项，捕获this的目的是可以在lambda表达式中使用当前类的成员函数和成员变量
+
+```
+class A
+{
+    public:
+    int i_ = 0;
+    void func(int x, int y)
+    {
+        auto x1 = []{ return i_; };                    // error，没有捕获外部变量
+        auto x2 = [=]{ return i_ + x + y; };           // OK，捕获所有外部变量
+        auto x3 = [&]{ return i_ + x + y; };           // OK，捕获所有外部变量
+        auto x4 = [this]{ return i_; };                // OK，捕获this指针
+        auto x5 = [this]{ return i_ + x + y; };        // error，没有捕获x、y
+        auto x6 = [this, x, y]{ return i_ + x + y; };  // OK，捕获this指针、x、y
+        auto x7 = [this]{ return i_++; };              // OK，捕获this指针，并修改成员的值
+    }
+};
+
+int a = 0, b = 1;
+auto f1 = []{ return a; };               // error，没有捕获外部变量
+auto f2 = [&]{ return a++; };            // OK，捕获所有外部变量，并对a执行自加运算
+auto f3 = [=]{ return a; };              // OK，捕获所有外部变量，并返回a
+auto f4 = [=]{ return a++; };            // error，a是以复制方式捕获的，无法修改
+auto f5 = [a]{ return a + b; };          // error，没有捕获变量b
+auto f6 = [a, &b]{ return a + (b++); };  // OK，捕获a和b的引用，并对b做自加运算
+auto f7 = [=, &b]{ return a + (b++); };  // OK，捕获所有外部变量和b的引用，并对b做自加运算
+```
+
+默认状态下 lambda 表达式无法修改通过复制方式捕获的外部变量。如果希望修改这些变量的话，我们需要使用引用方式进行捕获。
+
+一个容易出错的细节是关于 lambda 表达式的延迟调用的：
+```
+int a = 0;
+auto f = [=]{ return a; };      // 按值捕获外部变量
+a += 1;                         // a被修改了
+std::cout << f() << std::endl;  // 输出？
+```
+在这个例子中，lambda 表达式按值捕获了所有外部变量。在捕获的一瞬间，a 的值就已经被复制到f中了。之后 a 被修改，但此时 f 中存储的 a 仍然还是捕获时的值，因此，最终输出结果是 0。
+
+从上面的例子中我们知道，按值捕获得到的外部变量值是在 lambda 表达式定义时的值。此时所有外部变量均被复制了一份存储在 lambda 表达式变量中。此时虽然修改 lambda 表达式中的这些外部变量并不会真正影响到外部，我们却仍然无法修改它们。
+
+如果希望去修改按值捕获的外部变量应当显式指明 lambda 表达式为 mutable
+```
+int a = 0;
+auto f1 = [=]{ return a++; };             // error，修改按值捕获的外部变量
+auto f2 = [=]() mutable { return a++; };  // OK，mutable
+```
+
+#### lambda表达式的类型
+
+lambda表达式的类型在C++11中被称为**闭包类型**，它是一个特殊的，匿名的类类型。
+
+我们可以认为它是一个带有operator()的类，即仿函数。因此我们可以使用std::function和std::bind来存储和操作lambda表达式：
+```
+std::function<int(int)>  f1 = [](int a){ return a; };
+std::function<int(void)> f2 = std::bind([](int a){ return a; }, 123);
+```
+对于没有捕获任何变量的 lambda 表达式，还可以被转换成一个普通的函数指针：
+```
+using func_t = int(*)(int);
+func_t f = [](int a){ return a; };
+f(123);
+```
+lambda表达式可以说是就地定义仿函数闭包的“语法糖”。它的捕获列表捕获住的任何外部变量，最终均会变为闭包类型的成员变量。而一个使用了成员变量的类的 operator()，如果能直接被转换为普通的函数指针，那么 lambda表达式本身的 this 指针就丢失掉了。而没有捕获任何外部变量的 lambda表达式则不存在这个问题。
+
+这里也可以很自然地解释为何按值捕获无法修改捕获的外部变量。因为按照 C++ 标准，lambda表达式的 operator() 默认是 const 的。一个 const 成员函数是无法修改成员变量的值的。而 mutable 的作用，就在于取消 operator() 的 const。
+
+需要注意的是，没有捕获变量的 lambda表达式可以直接转换为函数指针，而捕获变量的 lambda 达式则不能转换为函数指针。看看下面的代码：
+```
+typedef void(*Ptr)(int*);
+Ptr p = [](int* p){delete p;};  // 正确，没有状态的lambda（没有捕获）的lambda表达式可以直接转换为函数指针
+Ptr p1 = [&](int* p){delete p;};  // 错误，有状态的lambda不能直接转换为函数指针
+```
+上面第二行代码能编译通过，而第三行代码不能编译通过，因为第三行的代码捕获了变量，不能直接转换为函数指针。

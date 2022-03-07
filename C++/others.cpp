@@ -541,6 +541,44 @@ public:
     }
 };
 
+class LambdaTest // 测试lambda表达式的按值捕获和按引用捕获
+{
+public:
+    void myPrint()
+    {
+        int a1 = 0;
+        auto f1 = [=]
+        {
+            return a1;
+        };                               // 按值捕获外部变量
+        a1++;                            // a被修改了
+        cout << "a1 = " << f1() << endl; // 输出？
+
+        int a2 = 0;
+        auto f2 = [&]
+        {
+            return a2;
+        };                               // 按引用捕获外部变量
+        a2++;                            // a被修改了
+        cout << "a2 = " << f2() << endl; // 输出？
+
+        int a3 = 0;
+        a3++;
+        auto f3 = [=]
+        {
+            return a3;
+        };                               // 按值捕获外部变量
+        a3++;                            // a被修改了
+        cout << "a3 = " << f3() << endl; // 输出？
+
+        /* 输出
+        a1 = 0
+        a2 = 1
+        a3 = 1
+        */
+    }
+};
+
 int main()
 {
     // ConstTest constTest;
@@ -575,8 +613,11 @@ int main()
 
     // InitializerList initializerList;
 
-    // MapTest myTest;
-    // myTest.myPrint();
+    // MapTest mapTest;
+    // mapTest.myPrint();
+
+    LambdaTest lambdaTest;
+    lambdaTest.myPrint();
 
     return 0;
 }

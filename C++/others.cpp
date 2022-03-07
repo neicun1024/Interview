@@ -119,6 +119,13 @@ public:
         cout << sizeof(test2) << endl;
         cout << sizeof(test3) << endl;
         cout << sizeof(test4) << endl;
+
+    /* 结果
+    20
+    16
+    24
+    16
+    */
     }
 };
 
@@ -382,15 +389,32 @@ public:
         f<int>(move(a));
 
         // f<int&>(1);         // 此时两个函数都变为左值引用，无法匹配
-        f<int &>(a); // 调用void f(T &&t)，相当于void f(int& &t)，左值引用
+        f<int &>(a); // 调用void f(T &t)，相当于void f(int& &t)，左值引用
         // f<int&>(move(a));   // 此时两个函数都变为左值引用，无法匹配
 
         f<int &&>(1);       // 调用void f(T &&t)，相当于void f(int&& &&t)，右值引用
-        f<int &&>(a);       // 调用void f(T &&t)，相当于void f(int&& &t)，左值引用
+        f<int &&>(a);       // 调用void f(T &t)，相当于void f(int&& &t)，左值引用
         f<int &&>(move(a)); // 调用void f(T &&t)，相当于void f(int&& &&t)，右值引用
 
         // 所有右值引用折叠到右值引用上仍然是一个右值引用
         // 所有的其他引用类型之间的折叠都将变成左值引用
+
+        /* 结果
+        Now is in f(T&& t)
+        i
+        Now is in f(T& t)
+        i
+        Now is in f(T&& t)
+        i
+        Now is in f(T& t)
+        i
+        Now is in f(T&& t)
+        i
+        Now is in f(T& t)
+        i
+        Now is in f(T&& t)
+        i
+        */
     }
 };
 
@@ -608,16 +632,16 @@ int main()
     // DynamicCast dynamicCast;
     // dynamicCast.myPrint();
 
-    // ReferenceTest referenceTest;
-    // referenceTest.myPrint();
+    ReferenceTest referenceTest;
+    referenceTest.myPrint();
 
     // InitializerList initializerList;
 
     // MapTest mapTest;
     // mapTest.myPrint();
 
-    LambdaTest lambdaTest;
-    lambdaTest.myPrint();
+    // LambdaTest lambdaTest;
+    // lambdaTest.myPrint();
 
     return 0;
 }

@@ -357,6 +357,10 @@ public:
         Derived *pD = dynamic_cast<Derived *>(pB);
         cout << typeid(pD).name() << endl;
 
+        Derived *pD2 = new Derived();
+        Base *pB2 = dynamic_cast<Base *>(pD2);
+        cout << typeid(pB2).name() << endl;
+
         // 引用类型
         // Base b;
         // f(b);
@@ -706,8 +710,8 @@ int main()
     // StaticCast staticCast;
     // staticCast.myPrint();
 
-    // DynamicCast dynamicCast;
-    // dynamicCast.myPrint();
+    DynamicCast dynamicCast;
+    dynamicCast.myPrint();
 
     // ReferenceTest referenceTest;
     // referenceTest.myPrint();

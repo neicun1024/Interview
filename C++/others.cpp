@@ -603,6 +603,83 @@ public:
     }
 };
 
+class StackStorageTest  // 测试大端小端以及变量在栈中的存放顺序
+{
+public:
+    void system_check()  // 测试大端小端
+    {
+        int a = 1;
+        if (*((char*)&a) == 1)
+        {
+            cout<< "small"<<endl;
+        }
+        else
+        {
+            cout<<"big"<<endl;
+        }
+    }
+
+    void memory_dump(void *ptr, int len) { // 输出内存数据
+        int i;
+
+        for (i = 0; i < len; i++) {
+            if (i % 8 == 0 && i != 0)
+                printf(" ");
+            if (i % 16 == 0 && i != 0)
+                printf("\n");
+            printf("%02x ", *((uint8_t *)ptr + i));
+        }
+        printf("\n");
+    }
+
+    void myPrint(){
+        system_check();
+        int var = 0x11112222;
+        char arr[10];
+        int var2 = 0x33334444;
+        
+        cout << "Address : var " << &var << endl;
+        cout << "Address : arr " << &arr << endl;
+        cout << "Address : arr " << &var2 << endl;
+        strcpy(arr, "hello world!");
+        cout << "var:" << hex << var << endl; // 将变量 var 以 16 进制输出
+        cout << "arr:" << arr << endl;
+        cout << "var2:" << hex << var2 << endl; // 将变量 var2 以 16 进制输出
+
+        cout<<endl;
+        memory_dump(&var, 32);
+        cout<<endl;
+        memory_dump(arr, 32);
+        cout<<endl;
+        memory_dump(&var2, 32);
+
+        /* 结果
+        small
+        Address : var 0x61fddc
+        Address : arr 0x61fdd2
+        Address : arr 0x61fdcc
+        var:11002164
+        arr:hello world!
+        var2:33334444
+
+        64 21 00 11 20 fe 61 00  00 00 00 00 69 15 40 00
+        00 00 00 00 1f fe 61 00  00 00 00 00 19 15 40 00
+
+        68 65 6c 6c 6f 20 77 6f  72 6c 64 21 00 11 20 fe
+        61 00 00 00 00 00 69 15  40 00 00 00 00 00 1f fe
+
+        44 44 33 33 30 16 68 65  6c 6c 6f 20 77 6f 72 6c
+        64 21 00 11 20 fe 61 00  00 00 00 00 69 15 40 00
+        */
+
+       /* 变量在栈上申请空间是从高到低申请的，起始地址是某个数的整数倍（可能是类型的大小），
+       注意到char arr[10]申请的栈空间，索引从低到高对应了地址从低到高，
+       而起始地址是arr[10]中最高的地址
+       */
+    }
+};
+
+
 int main()
 {
     // ConstTest constTest;
@@ -632,8 +709,8 @@ int main()
     // DynamicCast dynamicCast;
     // dynamicCast.myPrint();
 
-    ReferenceTest referenceTest;
-    referenceTest.myPrint();
+    // ReferenceTest referenceTest;
+    // referenceTest.myPrint();
 
     // InitializerList initializerList;
 
@@ -642,6 +719,9 @@ int main()
 
     // LambdaTest lambdaTest;
     // lambdaTest.myPrint();
+
+    // StackStorageTest stackStorageTest;
+    // stackStorageTest.myPrint();
 
     return 0;
 }

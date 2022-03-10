@@ -441,7 +441,7 @@ new (place_address) type [size] { braced initializer list }
    ![20220307193814](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220307193814.png)
    1. 将函数的返回地址入栈（编译器隐式地执行**push eip**指令）
    2. 将ebp入栈（因为每个函数都有自己的栈区域，所以栈基址也是不一样的，现在进入了一个中断函数，函数执行过程中也需要ebp寄存器）
-   3. 将栈顶地址作为该函数的栈基址，确定被调用的函数的栈区域（ebp为栈底，esp为栈顶）
+   3. 将栈顶地址作为该函数的栈基址（将栈底指针指向栈顶指针所指的地址），确定被调用的函数的栈区域（ebp为栈底，esp为栈顶）
    4. 将栈顶指针往上移动48h来将两个函数的栈区域隔开一段距离，该间隔区域的大小固定为40h，即64Byte，另外8h为预留出的存储局部变量的区域
    ![20220307200138](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220307200138.png)
    1. 将EBX、ESI、EDI入栈

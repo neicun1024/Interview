@@ -595,7 +595,7 @@ Ptr p1 = [&](int* p){delete p;};  // 错误，有状态的lambda不能直接转�
 
 
 ### GDB工作原理和内核实现
-[参考](https://oenhan.com/gdb-principle)
+[参考](https://zhuanlan.zhihu.com/p/336922639)
 
 gdb主要功能的实现依赖于一个系统函数ptrace，通过man手册可以了解到，ptrace可以让父进程观察和控制其子进程的检查、执行，改变其寄存器和内存的内容，主要应用于打断点（也是gdb的主要功能）和打印系统调用轨迹。
 

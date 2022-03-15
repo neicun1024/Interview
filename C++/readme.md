@@ -630,3 +630,25 @@ ptrace系统调用的request主要选项
 SYSCALL_DEFINE4(ptrace, long, request, long, pid, long, addr, long, data)
 
 根据不同的request调用不同函数，基本都是判断当前进程task中ptrace选项，走security_ptrace函数，在linux security模块中，然后汇编。
+
+
+### [单例是如何实现的](https://www.cnblogs.com/sunchaothu/p/10389842.html)
+
+- 必要条件：
+    - 私有化构造函数，防止外界创建单例类的对象
+    - 线程安全
+    - 禁止赋值和拷贝
+    - 提供一个公开的静态方法，用于获取类的唯一实例
+- 方法1：懒汉式
+    - 通过调用静态成员函数来获取静态成员变量，第一次调用时才初始化这个静态成员变量，这叫做延迟初始化
+    - 存在线程安全和内存泄露的问题
+- 方法2：线程安全、内存安全的懒汉式
+    - 加锁实现线程安全，共享指针实现内存安全
+- 方法3：局部静态变量
+    - 最推荐的方式
+
+
+### [如何在多个文件中共享全局变量？](https://www.learncpp.com/cpp-tutorial/sharing-global-constants-across-multiple-files-using-inline-variables/)
+
+在头文件中定义内联变量，在其他需要这个全局变量的文件中include这个头文件
+

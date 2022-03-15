@@ -89,6 +89,37 @@ int main(){
 }
 ```
 
+#### 3. 二叉树
+![20220315194600](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220315194600.png)
+
+```
+# include<bits/stdc++.h>
+using namespace std;
+
+const int mod = 1e9+7;
+
+int main(){
+    int n, m;
+    cin>>n>>m;
+    vector<vector<long long>> dp(n+1, vector<long long> (m+1, 0));
+    for(int j=0; j<=m; ++j){
+        dp[0][j] = dp[1][j] = 1;
+    }
+    for(int i=2; i<=n; ++i){
+        dp[i][0] = dp[i][1] = 0;
+    }
+    for(int i=2; i<=n; ++i){
+        for(int j=2; j<=m; ++j){
+            for(int k=0; k<i; ++k){
+                dp[i][j] += dp[k][j-1]*dp[i-1-k][j-1];
+                dp[i][j] %= mod;
+            }
+        }
+    }
+    cout<<dp[n][m]<<endl;
+}
+```
+
 #### 5. 知识竞赛
 ![20220314153752](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314153752.png)
 
@@ -112,7 +143,7 @@ int main(){
 ```
 
 
-#### 6.树上最短链 (6/10 组用例通过)
+#### 6.树上最短链
 ![20220314154737](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314154737.png)
 
 ```
@@ -143,21 +174,27 @@ int main(){
         vis[start] = true;
         int step = 1;
         while(!q.empty()){
+            int size = q.size();
             bool flag = false;
-            int cur = q.front();
-            q.pop();
-            for(int k=0; k<adj[cur].size(); ++k){
-                int des = adj[cur][k];
-                if(vis[des]){
-                    continue;
+            while(size--){
+                int cur = q.front();
+                q.pop();
+                for(int k=0; k<adj[cur].size(); ++k){
+                    int des = adj[cur][k];
+                    if(vis[des]){
+                        continue;
+                    }
+                    vis[des] = true;
+                    if(rank[start]==rank[des]){
+                        flag = true;
+                        ret = min(ret, step);
+                        break;
+                    }
+                    q.push(des);
                 }
-                vis[des] = true;
-                if(rank[start]==rank[des]){
-                    flag = true;
-                    ret = min(ret, step);
+                if(flag){
                     break;
                 }
-                q.push(des);
             }
             if(flag){
                 break;
@@ -178,7 +215,7 @@ int main(){
 }
 ```
 
-#### 7. 牛牛们吃糖果 (5/10 组用例通过)
+#### 7. 牛牛们吃糖果
 ![20220314161624](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314161624.png)
 
 ```
@@ -211,8 +248,8 @@ int main(){
     vector<vector<int>> dp(v.size()+1, vector<int> (m+1, 0));
     for(int i=1; i<=v.size(); ++i){
         for(int j=1; j<=m; ++j){
-            if(j>=v[i].first){
-                dp[i][j] = max(dp[i-1][j-v[i].first]+v[i].second, dp[i-1][j]);
+            if(j>=v[i-1].first){
+                dp[i][j] = max(dp[i-1][j-v[i-1].first]+v[i-1].second, dp[i-1][j]);
             }
             else{
                 dp[i][j] = dp[i-1][j];
@@ -224,7 +261,7 @@ int main(){
 }
 ```
 
-#### 9. 合法连续子段 (0/10 组用例通过)
+#### 9. 合法连续子段
 ![20220314163219](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314163219.png)
 
 ```
@@ -239,19 +276,19 @@ int main(){
         cin>>a[i];
     }
     unordered_map<int, int> cnt;
-    int ret = 0;
+    long long ret = 0;
     int i=0, j=0;
-    while(r < n){
-        cnt[a[r]]++;
-        while(l<=r && cnt[a[r]] >= m){
-            res += (n-r);
-            cnt[a[l]]--;
-            l++;
+    for(; j<n; ++j){
+        cnt[a[j]]++;
+        while(cnt[a[j]]>=m){
+            ret += (n-j);
+            cnt[a[i]]--;
+            ++i;
         }
-        r++;
     }
     cout<<ret<<endl;
     return 0;
 }
 ```
+这道题一开始一直出错，最后看题解才知道是结果用int存不下。。
 

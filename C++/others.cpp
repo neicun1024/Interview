@@ -841,7 +841,7 @@ private:
         D d;
 
     public:
-        C():d(nullptr){
+        C(){
             cout << "now is in default constructor of C" << endl;
         };
         ~C(){
@@ -859,7 +859,7 @@ private:
         C c;
 
     public:
-        D():c(nullptr){
+        D(){
             cout << "now is in default constructor of D" << endl;
         };
         ~D(){
@@ -907,6 +907,13 @@ public:
         cout << "count of spa = " << spa.use_count() << endl;
         cout << "count of spb = " << spb.use_count() << endl;
     }
+
+    void test_CircularReference2(){
+        C c;
+        D d;
+        c.setD(d);
+        d.setC(c);
+    }
     void myPrint()
     {
         // test_DefaultConstructor();
@@ -917,7 +924,9 @@ public:
 
         // test_AssignmentConstructor();
 
-        test_CircularReference();
+        // test_CircularReference();
+
+        test_CircularReference2();
     }
 };
 

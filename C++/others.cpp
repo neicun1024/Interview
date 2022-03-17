@@ -720,7 +720,7 @@ private:
             if ((*this->_count) > 0)
             {
                 (*this->_count)--;
-                cout << "count of SharedPtr - 1, count = "<< *this->_count << endl;
+                cout << "count of SharedPtr - 1, count = " << *this->_count << endl;
             }
             if ((*this->_count) == 0)
             {
@@ -737,7 +737,7 @@ private:
                 this->_ptr = ptr._ptr;
                 this->_count = ptr._count;
                 (*this->_count)++;
-                cout << "count of SharedPtr + 1, count = "<< *this->_count << endl;
+                cout << "count of SharedPtr + 1, count = " << *this->_count << endl;
             }
         }
         SharedPtr &operator=(const SharedPtr &ptr)
@@ -750,8 +750,12 @@ private:
             }
             else
             {
-                (*this->_count)--;
-                cout << "count of SharedPtr - 1, count = "<< *this->_count << endl;
+                if ((*this->_count) > 0)
+                {
+                    (*this->_count)--;
+                    cout << "count of SharedPtr - 1, count = " << *this->_count << endl;
+                }
+                cout << "count of SharedPtr - 1, count = " << *this->_count << endl;
                 if ((*this->_count) == 0)
                 {
                     delete this->_ptr;
@@ -761,18 +765,19 @@ private:
                 this->_ptr = ptr._ptr;
                 this->_count = ptr._count;
                 (*this->_count)++;
-                cout << "count of SharedPtr + 1, count = "<< *this->_count << endl;
-            }
+                cout << "count of SharedPtr + 1, count = " << *this->_count << endl;
+                return *this;
+            } 
         }
-        T& operator*()
+        T &operator*()
         {
-            cout<<"now is in T& operator*()"<<endl;
+            cout << "now is in T& operator*()" << endl;
             assert(this->_ptr != nullptr);
             return *(this->_ptr);
         }
-        T* operator->()
+        T *operator->()
         {
-            cout<<"now is in T* operator->()"<<endl;
+            cout << "now is in T* operator->()" << endl;
             assert(this->_ptr != nullptr);
             return this->_ptr;
         }
@@ -785,10 +790,12 @@ private:
     class Empty
     {
     public:
-        Empty(){
+        Empty()
+        {
             cout << "now is in default constructor of Empty" << endl;
         }
-        ~Empty(){
+        ~Empty()
+        {
             cout << "now is in destructor of Empty" << endl;
         }
     };
@@ -802,15 +809,17 @@ private:
         SharedPtr<B> spb;
 
     public:
-        A():spb(nullptr){
+        A() : spb(nullptr)
+        {
             cout << "now is in default constructor of A" << endl;
         };
-        ~A(){
+        ~A()
+        {
             cout << "now is in destructor of A" << endl;
         }
         void setB(const SharedPtr<B> &spb)
         {
-            cout << "int A : set spb" << endl;
+            cout << "in A : set spb" << endl;
             this->spb = spb;
         }
     };
@@ -820,75 +829,91 @@ private:
         SharedPtr<A> spa;
 
     public:
-        B():spa(nullptr){
+        B() : spa(nullptr)
+        {
             cout << "now is in default constructor of B" << endl;
         };
-        ~B(){
+        ~B()
+        {
             cout << "now is in destructor of B" << endl;
         }
         void setA(const SharedPtr<A> &spa)
         {
-            cout << "int B : set spa" << endl;
+            cout << "in B : set spa" << endl;
             this->spa = spa;
         }
     };
 
     class C;
     class D;
+
     class C
     {
     private:
-        D d;
+        shared_ptr<D> spd;
 
     public:
-        C(){
+        C() : spd()
+        {
             cout << "now is in default constructor of C" << endl;
         };
-        ~C(){
+        ~C()
+        {
             cout << "now is in destructor of C" << endl;
         }
-        void setD(const D &d)
+        void setD(const shared_ptr<D> &spd)
         {
-            cout << "int C : set d" << endl;
-            this->d = d;
+            cout << "in C : set spd" << endl;
+            this->spd = spd;
         }
     };
     class D
     {
     private:
-        C c;
+        weak_ptr<C> wpc;
 
     public:
-        D(){
+        D() : wpc()
+        {
             cout << "now is in default constructor of D" << endl;
         };
-        ~D(){
+        ~D()
+        {
             cout << "now is in destructor of D" << endl;
         }
-        void setC(const C &c)
+        void setC(const weak_ptr<C> &wpc)
         {
-            cout << "int D : set c" << endl;
-            this->c = c;
+            cout << "in D : set spc" << endl;
+            this->wpc = wpc;
+        }
+        void setC(const shared_ptr<C> &spc)
+        {
+            cout << "in D : set spc" << endl;
+            this->wpc = spc;
         }
     };
 
 public:
-    void test_DefaultConstructor(){
+    void test_DefaultConstructor()
+    {
         SharedPtr<Empty> spe;
         cout << "count of spe = " << spe.use_count() << endl;
     }
-    void test_Constructor(){
+    void test_Constructor()
+    {
         SharedPtr<Empty> spe(new Empty);
         cout << "count of spe = " << spe.use_count() << endl;
     }
-    void test_CopyConstructor(){
+    void test_CopyConstructor()
+    {
         SharedPtr<Empty> spe(new Empty());
         cout << "count of spe = " << spe.use_count() << endl;
         SharedPtr<Empty> spe2 = spe;
         cout << "count of spe = " << spe.use_count() << endl;
         cout << "count of spe2 = " << spe2.use_count() << endl;
     }
-    void test_AssignmentConstructor(){
+    void test_AssignmentConstructor()
+    {
         SharedPtr<Empty> spe(new Empty());
         SharedPtr<Empty> spe2(new Empty());
         cout << "count of spe = " << spe.use_count() << endl;
@@ -897,7 +922,8 @@ public:
         cout << "count of spe = " << spe.use_count() << endl;
         cout << "count of spe2 = " << spe2.use_count() << endl;
     }
-    void test_CircularReference(){
+    void test_CircularReference()
+    {
         SharedPtr<A> spa(new A());
         SharedPtr<B> spb(new B());
         cout << "count of spa = " << spa.use_count() << endl;
@@ -907,13 +933,28 @@ public:
         cout << "count of spa = " << spa.use_count() << endl;
         cout << "count of spb = " << spb.use_count() << endl;
     }
-
-    void test_CircularReference2(){
-        C c;
-        D d;
-        c.setD(d);
-        d.setC(c);
+    void test_WeakPtr()
+    {
+        weak_ptr<C> wpc;
+        weak_ptr<D> wpd;
+        cout << "count of wpc = " << wpc.use_count() << endl;
+        cout << "count of wpd = " << wpd.use_count() << endl;
+        {
+            shared_ptr<C> spc(new C());
+            shared_ptr<D> spd(new D());
+            spc->setD(spd);
+            spd->setC(spc);
+            cout << "count of spc = " << spc.use_count() << endl;
+            cout << "count of spd = " << spd.use_count() << endl;
+            wpc = spc;
+            wpd = spd;
+            cout << "count of wpc = " << wpc.use_count() << endl;
+            cout << "count of wpd = " << wpd.use_count() << endl;
+        }
+        cout << "count of wpc = " << wpc.use_count() << endl;
+        cout << "count of wpd = " << wpd.use_count() << endl;
     }
+
     void myPrint()
     {
         // test_DefaultConstructor();
@@ -926,7 +967,7 @@ public:
 
         // test_CircularReference();
 
-        test_CircularReference2();
+        // test_WeakPtr();
     }
 };
 
@@ -973,8 +1014,8 @@ int main()
     // StackStorageTest stackStorageTest;
     // stackStorageTest.myPrint();
 
-    SmartPtrTest smartPtrTest;
-    smartPtrTest.myPrint();
+    // SmartPtrTest smartPtrTest;
+    // smartPtrTest.myPrint();
 
     return 0;
 }

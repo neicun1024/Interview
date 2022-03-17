@@ -120,12 +120,12 @@ public:
         cout << sizeof(test3) << endl;
         cout << sizeof(test4) << endl;
 
-    /* 结果
-    20
-    16
-    24
-    16
-    */
+        /* 结果
+        20
+        16
+        24
+        16
+        */
     }
 };
 
@@ -607,26 +607,28 @@ public:
     }
 };
 
-class StackStorageTest  // 测试大端小端以及变量在栈中的存放顺序
+class StackStorageTest // 测试大端小端以及变量在栈中的存放顺序
 {
 public:
-    void system_check()  // 测试大端小端
+    void system_check() // 测试大端小端
     {
         int a = 1;
-        if (*((char*)&a) == 1)
+        if (*((char *)&a) == 1)
         {
-            cout<< "small"<<endl;
+            cout << "small" << endl;
         }
         else
         {
-            cout<<"big"<<endl;
+            cout << "big" << endl;
         }
     }
 
-    void memory_dump(void *ptr, int len) { // 输出内存数据
+    void memory_dump(void *ptr, int len)
+    { // 输出内存数据
         int i;
 
-        for (i = 0; i < len; i++) {
+        for (i = 0; i < len; i++)
+        {
             if (i % 8 == 0 && i != 0)
                 printf(" ");
             if (i % 16 == 0 && i != 0)
@@ -636,12 +638,13 @@ public:
         printf("\n");
     }
 
-    void myPrint(){
+    void myPrint()
+    {
         system_check();
         int var = 0x11112222;
         char arr[10];
         int var2 = 0x33334444;
-        
+
         cout << "Address : var " << &var << endl;
         cout << "Address : arr " << &arr << endl;
         cout << "Address : arr " << &var2 << endl;
@@ -650,11 +653,11 @@ public:
         cout << "arr:" << arr << endl;
         cout << "var2:" << hex << var2 << endl; // 将变量 var2 以 16 进制输出
 
-        cout<<endl;
+        cout << endl;
         memory_dump(&var, 32);
-        cout<<endl;
+        cout << endl;
         memory_dump(arr, 32);
-        cout<<endl;
+        cout << endl;
         memory_dump(&var2, 32);
 
         /* 结果
@@ -676,13 +679,247 @@ public:
         64 21 00 11 20 fe 61 00  00 00 00 00 69 15 40 00
         */
 
-       /* 变量在栈上申请空间是从高到低申请的，起始地址是某个数的整数倍（可能是类型的大小），
-       注意到char arr[10]申请的栈空间，索引从低到高对应了地址从低到高，
-       而起始地址是arr[10]中最高的地址
-       */
+        /* 变量在栈上申请空间是从高到低申请的，起始地址是某个数的整数倍（可能是类型的大小），
+        注意到char arr[10]申请的栈空间，索引从低到高对应了地址从低到高，
+        而起始地址是arr[10]中最高的地址
+        */
     }
 };
 
+class SmartPtrTest //这个类用于测试智能指针
+{
+private:
+    template <typename T>
+    class SharedPtr
+    {
+    private:
+        T *_ptr;
+        size_t *_count;
+
+    public:
+        SharedPtr() : _ptr(nullptr), _count(nullptr)
+        {
+            cout << "now is in default constructor of SharedPtr" << endl;
+            _count = new size_t(0);
+        };
+        SharedPtr(T *ptr) : _ptr(ptr), _count(nullptr)
+        {
+            cout << "now is in constructor of SharedPtr" << endl;
+            if (ptr)
+            {
+                _count = new size_t(1);
+            }
+            else
+            {
+                _count = new size_t(0);
+            }
+        }
+        ~SharedPtr()
+        {
+            cout << "now is in destructor of SharedPtr" << endl;
+            if ((*this->_count) > 0)
+            {
+                (*this->_count)--;
+                cout << "count of SharedPtr - 1, count = "<< *this->_count << endl;
+            }
+            if ((*this->_count) == 0)
+            {
+                delete this->_ptr;
+                delete this->_count;
+                cout << "delete this SharedPtr" << endl;
+            }
+        }
+        SharedPtr(const SharedPtr &ptr)
+        {
+            cout << "now is in copy constructor of SharedPtr" << endl;
+            if (this != &ptr)
+            {
+                this->_ptr = ptr._ptr;
+                this->_count = ptr._count;
+                (*this->_count)++;
+                cout << "count of SharedPtr + 1, count = "<< *this->_count << endl;
+            }
+        }
+        SharedPtr &operator=(const SharedPtr &ptr)
+        {
+            cout << "now is in assignment constructor of SharedPtr" << endl;
+            if (this->_ptr == ptr._ptr)
+            {
+                cout << "this->_ptr == ptr._ptr" << endl;
+                return *this;
+            }
+            else
+            {
+                (*this->_count)--;
+                cout << "count of SharedPtr - 1, count = "<< *this->_count << endl;
+                if ((*this->_count) == 0)
+                {
+                    delete this->_ptr;
+                    delete this->_count;
+                    cout << "delete old SharedPtr" << endl;
+                }
+                this->_ptr = ptr._ptr;
+                this->_count = ptr._count;
+                (*this->_count)++;
+                cout << "count of SharedPtr + 1, count = "<< *this->_count << endl;
+            }
+        }
+        T& operator*()
+        {
+            cout<<"now is in T& operator*()"<<endl;
+            assert(this->_ptr != nullptr);
+            return *(this->_ptr);
+        }
+        T* operator->()
+        {
+            cout<<"now is in T* operator->()"<<endl;
+            assert(this->_ptr != nullptr);
+            return this->_ptr;
+        }
+        size_t use_count()
+        {
+            return *this->_count;
+        }
+    };
+
+    class Empty
+    {
+    public:
+        Empty(){
+            cout << "now is in default constructor of Empty" << endl;
+        }
+        ~Empty(){
+            cout << "now is in destructor of Empty" << endl;
+        }
+    };
+
+    class A;
+    class B;
+
+    class A
+    {
+    private:
+        SharedPtr<B> spb;
+
+    public:
+        A():spb(nullptr){
+            cout << "now is in default constructor of A" << endl;
+        };
+        ~A(){
+            cout << "now is in destructor of A" << endl;
+        }
+        void setB(const SharedPtr<B> &spb)
+        {
+            cout << "int A : set spb" << endl;
+            this->spb = spb;
+        }
+    };
+    class B
+    {
+    private:
+        SharedPtr<A> spa;
+
+    public:
+        B():spa(nullptr){
+            cout << "now is in default constructor of B" << endl;
+        };
+        ~B(){
+            cout << "now is in destructor of B" << endl;
+        }
+        void setA(const SharedPtr<A> &spa)
+        {
+            cout << "int B : set spa" << endl;
+            this->spa = spa;
+        }
+    };
+
+    class C;
+    class D;
+    class C
+    {
+    private:
+        D d;
+
+    public:
+        C():d(nullptr){
+            cout << "now is in default constructor of C" << endl;
+        };
+        ~C(){
+            cout << "now is in destructor of C" << endl;
+        }
+        void setD(const D &d)
+        {
+            cout << "int C : set d" << endl;
+            this->d = d;
+        }
+    };
+    class D
+    {
+    private:
+        C c;
+
+    public:
+        D():c(nullptr){
+            cout << "now is in default constructor of D" << endl;
+        };
+        ~D(){
+            cout << "now is in destructor of D" << endl;
+        }
+        void setC(const C &c)
+        {
+            cout << "int D : set c" << endl;
+            this->c = c;
+        }
+    };
+
+public:
+    void test_DefaultConstructor(){
+        SharedPtr<Empty> spe;
+        cout << "count of spe = " << spe.use_count() << endl;
+    }
+    void test_Constructor(){
+        SharedPtr<Empty> spe(new Empty);
+        cout << "count of spe = " << spe.use_count() << endl;
+    }
+    void test_CopyConstructor(){
+        SharedPtr<Empty> spe(new Empty());
+        cout << "count of spe = " << spe.use_count() << endl;
+        SharedPtr<Empty> spe2 = spe;
+        cout << "count of spe = " << spe.use_count() << endl;
+        cout << "count of spe2 = " << spe2.use_count() << endl;
+    }
+    void test_AssignmentConstructor(){
+        SharedPtr<Empty> spe(new Empty());
+        SharedPtr<Empty> spe2(new Empty());
+        cout << "count of spe = " << spe.use_count() << endl;
+        cout << "count of spe2 = " << spe2.use_count() << endl;
+        spe2 = spe;
+        cout << "count of spe = " << spe.use_count() << endl;
+        cout << "count of spe2 = " << spe2.use_count() << endl;
+    }
+    void test_CircularReference(){
+        SharedPtr<A> spa(new A());
+        SharedPtr<B> spb(new B());
+        cout << "count of spa = " << spa.use_count() << endl;
+        cout << "count of spb = " << spb.use_count() << endl;
+        spa->setB(spb);
+        spb->setA(spa);
+        cout << "count of spa = " << spa.use_count() << endl;
+        cout << "count of spb = " << spb.use_count() << endl;
+    }
+    void myPrint()
+    {
+        // test_DefaultConstructor();
+
+        // test_Constructor();
+
+        // test_CopyConstructor();
+
+        // test_AssignmentConstructor();
+
+        test_CircularReference();
+    }
+};
 
 int main()
 {
@@ -710,8 +947,8 @@ int main()
     // StaticCast staticCast;
     // staticCast.myPrint();
 
-    DynamicCast dynamicCast;
-    dynamicCast.myPrint();
+    // DynamicCast dynamicCast;
+    // dynamicCast.myPrint();
 
     // ReferenceTest referenceTest;
     // referenceTest.myPrint();
@@ -726,6 +963,9 @@ int main()
 
     // StackStorageTest stackStorageTest;
     // stackStorageTest.myPrint();
+
+    SmartPtrTest smartPtrTest;
+    smartPtrTest.myPrint();
 
     return 0;
 }

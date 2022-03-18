@@ -767,7 +767,7 @@ private:
                 (*this->_count)++;
                 cout << "count of SharedPtr + 1, count = " << *this->_count << endl;
                 return *this;
-            } 
+            }
         }
         T &operator*()
         {

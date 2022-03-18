@@ -119,3 +119,63 @@ INSERT、UPDATE、DELETE 操作会创建一个日志，并将事务版本号 TRX
 #### ReadView
 
 MVCC 维护了一个 ReadView 结构，主要包含了当前系统未提交的事务列表 TRX_IDs {TRX_ID_1, TRX_ID_2, ...}，还有该列表的最小值 TRX_ID_MIN 和 TRX_ID_MAX。
+
+![20220317152441](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220317152441.png)
+
+在进行 SELECT 操作时，根据数据行快照的 TRX_ID 与 TRX_ID_MIN 和 TRX_ID_MAX 之间的关系，从而判断数据行快照是否可以使用：
+- TRX_ID < TRX_ID_MIN，表示该数据行快照是在当前所有未提交事务之前进行更改的，因此可以使用
+- TRX_ID > TRX_ID_MAX，表示该数据行快照是在事务启动之后被更改的，因此不可使用
+- TRX_ID_MIN <= TRX_ID <= TRX_ID_MAX，需要根据隔离级别再进行判断：
+  - 提交读：如果 TRX_ID 在 TRX_IDs 列表中，表示该数据行快照对应的事务还未提交，则该快照不可使用。否则表示已经提交，可以使用
+  - 可重复读：都不可以使用。因为如果可以使用的话，那么其它事务也可以读到这个数据行快照并进行修改，那么当前事务再去读这个数据行得到的值就会发生改变，也就是出现了不可重复读问题
+
+在数据行快照不可使用的情况下，需要沿着 Undo Log 的回滚指针 ROLL_PTR 找到下一个快照，再进行上面的判断。
+
+
+#### 快照读与当前读
+
+1. 快照读
+MVCC 的 SELECT 操作是快照中的数据，不需要进行加锁操作。
+```
+SELECT * FROM table ...;
+```
+
+2. 当前读
+MVCC 其它会对数据库进行修改的操作（INSERT、UPDATE、DELETE）需要进行加锁操作，从而读取最新的数据。可以看到 MVCC 并不是完全不用加锁，而只是避免了 SELECT 的加锁操作。
+```
+INSERT;
+UPDATE;
+DELETE;
+```
+在进行 SELECT 操作时，可以强制指定进行加锁操作。以下第一个语句需要加 S 锁，第二个需要加 X 锁。
+```
+SELECT * FROM table WHERE ? lock in share mode;
+SELECT * FROM table WHERE ? for update;
+```
+
+
+### Next-Key Locks
+Next-Key Locks 是 MySQL 的 InnoDB 存储引擎的一种锁实现。
+
+MVCC 不能解决幻影读问题，Next-Key Locks 就是为了解决这个问题而存在的。在可重复读（REPEATABLE READ）隔离级别下，使用 MVCC + Next-Key Locks 可以解决幻读问题。
+
+#### Record Locks
+锁定一个记录上的索引，而不是记录本身。
+
+如果表没有设置索引，InnoDB 会自动在主键上创建隐藏的聚簇索引，因此 Record Locks 依然可以使用。
+
+#### Gap Locks
+锁定索引之间的间隙，但是不包含索引本身。例如当一个事务执行以下语句，其它事务就不能在 t.c 中插入 15。
+```
+SELECT c FROM t WHERE c BETWEEN 10 and 20 FOR UPDATE;
+```
+
+#### Next-Key Locks
+它是 Record Locks 和 Gap Locks 的结合，不仅锁定一个记录上的索引，也锁定索引之间的间隙。它锁定一个前开后闭区间，例如一个索引包含以下值：10, 11, 13, and 20，那么就需要锁定以下区间：
+```
+(-∞, 10]
+(10, 11]
+(11, 13]
+(13, 20]
+(20, +∞)
+```

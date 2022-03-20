@@ -292,3 +292,343 @@ int main(){
 ```
 这道题一开始一直出错，最后看题解才知道是结果用int存不下。。
 
+
+
+
+### 拼多多2021笔试真题集
+
+#### 1. 多多的数字组合
+![20220320144145](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320144145.png)
+
+```
+# include<bits/stdc++.h>
+using namespace std;
+
+int main(){
+    int n;
+    cin>>n;
+    if(n<10){
+        cout<<n<<endl;
+        return 0;
+    }
+    else if(n>45){
+        cout<<-1<<endl;
+        return 0;
+    }
+    int res = 0;
+    int base = 0;
+    int cur = 9;
+    while(n>cur){
+        res += cur * pow(10, base);
+        n -= cur;
+        cur--;
+        base++;
+    }
+    if(n){
+        res += n * pow(10, base);
+    }
+    cout<<res<<endl;
+    return 0;
+}
+```
+
+#### 2. 多多的字符变换
+![20220320143743](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320143743.png)
+
+```
+# include<bits/stdc++.h>
+using namespace std;
+
+int main(){
+    int n;
+    cin>>n;
+    string a, b;
+    cin>>a>>b;
+    vector<int> count(26, 0);
+    for(int i=0; i<n; ++i){
+        count[a[i]-'a']++;
+        count[b[i]-'a']--;
+    }
+    vector<int> dif_a, dif_b;
+    for(int i=0; i<26; ++i){
+        if(count[i]==0){
+            continue;
+        }
+        else if(count[i]>0){
+            for(int j=0; j<count[i]; ++j){
+                dif_a.push_back(i);
+            }
+        }
+        else{
+            for(int j=0; j<-count[i]; ++j){
+                dif_b.push_back(i);
+            }
+        }
+    }
+    int res = 0;
+    for(int i=0; i<dif_a.size(); ++i){
+        res += abs(dif_a[i]-dif_b[i]);
+    }
+    cout<<res<<endl;
+    return 0;
+}
+```
+
+
+#### 3. 多多的求和计算
+![20220320143556](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320143556.png)
+
+```
+# include<bits/stdc++.h>
+using namespace std;
+
+int main(){
+    int n, m;
+    cin>>n>>m;
+    vector<int> a(n);
+    for(int i=0; i<n; ++i){
+        int x;
+        cin>>x;
+        a[i] = x % m;
+    }
+    unordered_map<int,int> ma;
+    ma[0] = 1;
+    int pre = 0, cur = 0;
+    for(int i=1; i<=n; ++i){
+        cur = pre + a[i-1];
+        cur %= m;
+        ma[cur]++;
+        pre = cur;
+    }
+    long long res = 0;
+    for(unordered_map<int,int>::iterator iter=ma.begin(); iter!=ma.end(); ++iter){
+        long long num = iter->second;
+        res += (num*(num-1)/2);
+    }
+    cout<<res<<endl;
+    return 0;
+}
+```
+unordered_map的key为前缀和的模，value为等于key的模的数量
+
+#### 4. 多多的骰子组合
+![20220320144117](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320144117.png)
+
+```
+# include<bits/stdc++.h>>
+using namespace std;
+
+int main(){
+    int n;
+    cin>>n;
+    unordered_map<int, int> m;
+    while(n--){
+        vector<int> v(6);
+        for(int i=0; i<6; ++i){
+            cin>>v[i];
+        }
+        bool neg = false;
+        for(int i=0; i<6; i+=2){
+            if(v[i]<v[i+1]){
+                neg = !neg;
+            }
+        }
+        vector<pair<int,int>> vv;
+        for(int i=0; i<6; i+=2){
+            vv.push_back({v[i]+v[i+1], i/2});
+        }
+        sort(vv.begin(), vv.end(), [v](const pair<int,int> &p1, const pair<int,int> &p2)->bool{
+            if(p1.first==p2.first){
+                int a = min(v[p1.second*2], v[p1.second*2+1]);
+                int b = min(v[p2.second*2], v[p2.second*2+1]);
+                return a<b?true:false;
+            }
+            else{
+                return p1.first<p2.first?true:false;
+            }
+        });
+        if(vv[0].second==0 && vv[1].second==1 || vv[0].second==1 && vv[1].second==2 || vv[0].second==2 && vv[1].second==0){
+            neg = !neg;
+        }
+        int key = 0;
+        for(int i=0; i<3; ++i){
+            int a = min(v[vv[i].second*2], v[vv[i].second*2+1]);
+            int b = max(v[vv[i].second*2], v[vv[i].second*2+1]);
+            key = key * 10 + a;
+            key = key * 10 + b;
+        }
+        if(neg){
+            key = -key;
+        }
+        m[key]++;
+    }
+    vector<int> res;
+    for(unordered_map<int, int>::iterator iter=m.begin(); iter!=m.end(); ++iter){
+        res.push_back(iter->second);
+    }
+    sort(res.rbegin(), res.rend());
+    cout<<res.size()<<endl;
+    for(int i=0; i<res.size(); ++i){
+        cout<<res[i]<<" ";
+    }
+    return 0;
+}
+```
+
+
+### 拼多多2020校招部分编程题合集
+
+#### 1. 多多的魔术盒子
+![20220320165354](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320165354.png)
+
+```
+# include<bits/stdc++.h>
+using namespace std;
+int main(){
+    int T;
+    cin>>T;
+    while(T--){
+        int x;
+        cin>>x;
+        int res = 0;
+        while(x){
+            x /= 2;
+            res++;
+        }
+        cout<<res<<endl;
+    }
+    return 0;
+}
+```
+二分的思想，从中间的数开始减，使得两边需要减少的次数相同
+
+
+#### 2. 多多的排列函数
+![20220320165444](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320165444.png)
+
+```
+# include<bits/stdc++.h>
+using namespace std;
+int main(){
+    int T;
+    cin>>T;
+    while(T--){
+        int n;
+        cin>>n;
+        int res_min, res_max;
+        if(n*(n+1)/2%2==0){
+            res_min = 0;
+        }
+        else{
+            res_min = 1;
+        }
+        if((n-1)*n/2%2==0){
+            res_max = n;
+        }
+        else{
+            res_max = n-1;
+        }
+        cout<<res_min<<" "<<res_max<<endl;
+    }
+    return 0;
+}
+```
+找规律，最小值由1到n求和决定，最大值由1-到n-1求和决定
+
+
+#### 3. 多多的电子字典（没做出来）
+![20220320175207](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320175207.png)
+
+
+#### 4. 骰子期望
+![20220320165706](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320165706.png)
+
+```
+# include<bits/stdc++.h>
+using namespace std;
+int main(){
+    int n;
+    cin>>n;
+    vector<int> num(n);
+    for(int i=0; i<n; ++i){
+        cin>>num[i];
+    }
+    sort(num.begin(), num.end());
+    
+    
+    double ratio = 1;
+    for(int i=0; i<n; ++i){
+        ratio /= num[i];
+    }
+    vector<double> prefix(n+1, 1);
+    for(int i=1; i<=n; ++i){
+        prefix[i] = prefix[i-1] * num[i-1];
+    }
+    
+    double res = 0;
+    int start = 0;
+    for(int max_num=1; max_num<=num[n-1]; ++max_num){
+        while(num[start]<max_num)++start;
+        int len = n - start;
+        res = res + (max_num * ratio * ((pow(max_num, len) - pow(max_num-1, len))) * prefix[start]);
+    }
+    cout<<fixed<<setprecision(2)<<res<<endl;
+    return 0;
+}
+```
+这题属实麻烦。。
+
+
+#### 5. 二维表第k大数(8/10 组用例通过 运行超时)
+![20220320172351](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320172351.png)
+
+```
+# include<bits/stdc++.h>
+using namespace std;
+
+void up(vector<int> &v, int idx){
+    while(idx>1 && v[idx]<v[idx/2]){
+        swap(v[idx], v[idx/2]);
+        idx /= 2;
+    }
+}
+
+void down(vector<int> &v, int idx){
+    while(idx<=(v.size()-1)/2){
+        int tmp = idx*2;
+        if(idx*2+1<=v.size()-1 && v[idx*2+1]<v[idx*2]){
+            tmp = idx*2+1;
+        }
+        if(v[idx]>v[tmp]){
+            swap(v[idx], v[tmp]);
+            idx = tmp;
+        }
+        else{
+            return;
+        }
+    }
+}
+
+int main(){
+    int n,m,k;
+    cin>>n>>m>>k;
+    vector<int> v(k+1);
+    int cnt = 0;
+    for(int i=n; i>=1; --i){
+        for(int j=m; j>=1; --j){
+            if(cnt<k){
+                v[cnt+1] = i*j;
+                up(v, cnt+1);
+                cnt++;
+            }
+            else if(i*j>v[1]){
+                v[1] = i*j;
+                down(v, 1);
+            }
+        }
+    }
+    cout<<v[1];
+    return 0;
+}
+```
+emmm，看了题解，还是得用二分啊。。

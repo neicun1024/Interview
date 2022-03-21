@@ -27,7 +27,7 @@
         2.  对于分布式系统，消息传递相比共享内存更易实现
     * 缺点：
         1. 消息传递的实现经常采用系统调用，需要消耗更多时间以便内核介入
-* 信号(Signal)：一种比较复杂的通信方式，用于通知接受进程的某个事件已经发生，比如**CTRL+C**和**kill -9**
+* 信号(Signal)：一种比较复杂的通信方式，用于通知接受进程的某个事件已经发生，比如**CTRL+C**、**CTRL+Z**、**kill -9**
 
 * 共享内存(Shared Memory)：映射一段能被其它进程所访问的内存，这段共享内存由一个进程创建，但多个进程都可以访问
     * 优点：
@@ -47,7 +47,7 @@
         4. 可以加密，数据安全性强
     * 缺点：需要对传输的数据进行解析，转化成应用级的数据
 
-### 线程之间的通信方式
+### 线程同步的方式
 * 锁机制：包括互斥锁/量（mutex）、读写锁（reader-writer lock）、自旋锁（spin lock）、条件变量（condition）
     * 互斥锁/量（mutex）：提供了以排他方式防止数据结构被并发修改的方法
     * 读写锁（reader-writer lock）：允许多个线程同时读共享数据，而对写操作是互斥的
@@ -133,3 +133,8 @@
 
 ### IO多路复用
 [你管这破玩意叫 IO 多路复用？](https://mp.weixin.qq.com/s?__biz=Mzk0MjE3NDE0Ng==&mid=2247494866&idx=1&sn=0ebeb60dbc1fd7f9473943df7ce5fd95&chksm=c2c5967ff5b21f69030636334f6a5a7dc52c0f4de9b668f7bac15b2c1a2660ae533dd9878c7c&scene=21#wechat_redirect)
+
+
+### [CTRL+C和kill的关系](http://blog.sina.com.cn/s/blog_716358dc0100lj6e.html)
+
+CTRL+C向当前用户的进程组（process group，包括parent process，child process）中的child process的发送SIGINT signal，child process被终止后由系统再向parent process发送SIGINT signal，随之parent process被终止。所以单纯的使用kill -SIGINT是无法实现终止一个带有child process的parent process，使用kill -SIGKILL终止parent process，只会导致child process成为孤儿进程。所以如果向使用代码的方式终止带有child process的parent process，必须先将所有child process终止掉，才能让parent process终止。

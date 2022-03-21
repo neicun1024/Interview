@@ -179,3 +179,7 @@ SELECT c FROM t WHERE c BETWEEN 10 and 20 FOR UPDATE;
 (13, 20]
 (20, +∞)
 ```
+
+
+### [一条SQL语句在MySQL中是如何执行的？](https://z.itpub.net/article/detail/43FB56B82F2178BB326272D693D6858B)
+

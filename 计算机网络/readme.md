@@ -28,3 +28,8 @@ socket、bind、listen、accept、recv、send、close
 5. 数据读写
 6. 发起连接（客户端）
 7. 关闭连接
+
+
+### 如果服务器和带宽的资源无限，TCP的连接数的上限是多少?
+   - [参考](https://mp.weixin.qq.com/s/X6c_H5_4OInR8nFQVn7IMA)
+   - 应该是端口号的范围，端口用16位数字表示，范围是0-65535，其中0-1024保留给预定义的服务，而剩下的端口中可使用的端口范围是有具体限制的，可以在 / etc/sysctl.conf 中修改

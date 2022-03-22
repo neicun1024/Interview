@@ -34,7 +34,7 @@
 
 - Kubernetes用于管理这些应用程序所在的小运行环境（容器）
 - 一个K8S系统，通常称为一个K8S集群，包括一个Master节点（主节点）和一群Node节点（计算节点）
-- Master节点主要负责管理和控制，Node节点时工作负载节点，里面是具体的容器
+- Master节点主要负责管理和控制，Node节点是工作负载节点，里面是具体的容器
 - Node节点包括Docker、Kubelet、Kube-proxy、Fluentd、kube-dns、Pod
   - Pod是Kubernetes最基本的操作单元，一个Pod代表着集群中运行的一个进程，它内部封装了一个或多个紧密相关的容器
   - Docker负责创建容器

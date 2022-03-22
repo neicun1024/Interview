@@ -1,4 +1,4 @@
-## 记录了各种算法的规范流程
+## 记录了各种算法
 
 ### 回溯
 1. 画出递归树，找到状态变量(回溯函数的参数)，这一步非常重要※
@@ -9,5 +9,6 @@
 6. 撤销选择
 
 [回溯算法详解](https://leetcode-cn.com/problems/subsets/solution/c-zong-jie-liao-hui-su-wen-ti-lei-xing-dai-ni-gao-/)
+
 
 ### 

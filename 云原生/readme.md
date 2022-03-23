@@ -20,7 +20,7 @@
 - 虚拟机：在物理硬件虚拟成多套硬件后，需要在每套硬件上都部署一个操作系统，接着在这些操作系统上运行相应的应用程序
 - 缺点：占用空间大、启动慢、虚拟机软件可能收费
 
-![20220306181121](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220306181121.png)
+![20220323102426](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220323102426.png)
 
 #### Docker
 
@@ -28,6 +28,7 @@
 
 - Docker容器内的应用程序直接运行在宿主机的内核上，Docker引擎将一些各自独立的应用程序和它们各自的依赖打包，相互独立直接运行于未经虚拟化的宿主机硬件上，同时各个容器也没有自己的内核，比传统虚拟机更轻便
 
+![20220323102504](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220323102504.png)
  
 #### K8S
 [Kubernetes官方介绍](https://kubernetes.io/zh/docs/concepts/overview/what-is-kubernetes/)

@@ -28,13 +28,13 @@
 
 - Docker容器内的应用程序直接运行在宿主机的内核上，Docker引擎将一些各自独立的应用程序和它们各自的依赖打包，相互独立直接运行于未经虚拟化的宿主机硬件上，同时各个容器也没有自己的内核，比传统虚拟机更轻便
 
-
+ 
 #### K8S
 [Kubernetes官方介绍](https://kubernetes.io/zh/docs/concepts/overview/what-is-kubernetes/)
 
 - Kubernetes用于管理这些应用程序所在的小运行环境（容器）
 - 一个K8S系统，通常称为一个K8S集群，包括一个Master节点（主节点）和一群Node节点（计算节点）
-- Master节点主要负责管理和控制，Node节点时工作负载节点，里面是具体的容器
+- Master节点主要负责管理和控制，Node节点是工作负载节点，里面是具体的容器
 - Node节点包括Docker、Kubelet、Kube-proxy、Fluentd、kube-dns、Pod
   - Pod是Kubernetes最基本的操作单元，一个Pod代表着集群中运行的一个进程，它内部封装了一个或多个紧密相关的容器
   - Docker负责创建容器

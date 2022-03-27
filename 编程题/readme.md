@@ -634,3 +634,158 @@ int main(){
 }
 ```
 emmm，看了题解，还是得用二分啊。。
+
+
+### 网易2021校招笔试-C++开发工程师（提前批）
+
+#### 1. 平分物品
+
+![20220327143909](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327143909.png)
+
+```
+# include<bits/stdc++.h>
+using namespace std;
+
+void backtrace(vector<int> &v, vector<int> &choose, int sum, int a, int b, int &ans, int idx){
+    if(a==b){
+        ans = min(ans, sum-a-b);
+    }
+    if(idx>=v.size()){
+        return;
+    }
+    choose[idx] = 0;
+    backtrace(v, choose, sum, a, b, ans, idx+1);
+    if(a+v[idx]<=sum/2){
+        choose[idx] = 1;
+        backtrace(v, choose, sum, a+v[idx], b, ans, idx+1);
+    }
+    if(b+v[idx]<=sum/2){
+        choose[idx] = 2;
+        backtrace(v, choose, sum, a, b+v[idx], ans, idx+1);
+    }
+}
+
+int main(){
+    int T;
+    cin>>T;
+    while(T--){
+        int n;
+        cin>>n;
+        vector<int> v(n);
+        int sum = 0;
+        for(int i=0; i<n; ++i){
+            cin>>v[i];
+            sum += v[i];
+        }
+        vector<int> choose(n);
+        int ans = INT_MAX;
+        backtrace(v, choose, sum, 0, 0, ans, 0);
+        cout<<ans<<endl;
+    }
+}
+```
+
+#### 2. 买票问题(8/20 组用例通过)
+
+![20220327143820](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327143820.png)
+
+```
+# include<bits/stdc++.h>
+using namespace std;
+
+int main(){
+    int T;
+    cin>>T;
+    while(T--){
+        int n;
+        cin>>n;
+        vector<int> a(n);
+        int sum = 0;
+        for(int i=0; i<n; ++i){
+            cin>>a[i];
+            sum += a[i];
+        }
+        vector<int> b(n);
+        for(int i=1; i<n; ++i){
+            cin>>b[i];
+        }
+        vector<int> dp(n, 0);
+        for(int i=0; i<n; ++i){
+            if(i==0){
+                dp[i] = a[i];
+            }
+            else if(i==1){
+                dp[i] = min(dp[i-1]+a[i], b[i]);
+            }
+            dp[i] = min(dp[i-1]+a[i], dp[i-2]+b[i]);
+        }
+        sum = min(sum, dp[n-1]);
+        int h, m, s;
+        s = sum%60;
+        sum /= 60;
+        m = sum%60;
+        sum /= 60;
+        h = sum%24 + 8;
+        string str;
+        if(h+sum>=12){
+            h -= 12;
+            str = "pm";
+        }
+        else{
+            str = "am";
+        }
+        cout<<setw(2)<<setfill('0')<<h<<":"<<setw(2)<<m<<":"<<setw(2)<<s<<" "<<str<<endl;
+    }
+}
+```
+
+#### 3. 小易爱回文
+
+![20220327144015](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327144015.png)
+
+```
+# include<bits/stdc++.h>
+using namespace std;
+
+int main(){
+    string s;
+    cin>>s;
+    int len = s.size();
+    int max_len = 0;
+    vector<vector<bool>> dp(len, vector<bool> (len, false));
+    for(int i=1; i<=len; ++i){
+        for(int j=i-1; j<len; ++j){
+            if(i==1){
+                dp[j][j] = true;
+                if(j==len-1){
+                    max_len = i;
+                }
+            }
+            else if(i==2){
+                if(s[j-1]==s[j]){
+                    dp[j-1][j] = true;
+                    if(j==len-1){
+                        max_len = i;
+                    }
+                }
+            }
+            else {
+                if(s[j-i+1]==s[j] && dp[j-i+2][j-1]){
+                    dp[j-i+1][j] = true;
+                    if(j==len-1){
+                        max_len = i;
+                    }
+                }
+            }
+        }
+    }
+    for(int i=len-max_len-1; i>=0; --i){
+        s += s[i];
+    }
+    cout<<s<<endl;
+}
+```
+
+#### 4. 学术认可
+
+![20220327145232](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327145232.png)

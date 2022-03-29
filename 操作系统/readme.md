@@ -63,11 +63,11 @@
 
 
 ### 进程之间私有和共享的资源
-* 私有：地址空间、堆、全局变量、栈、寄存器
-* 共享：代码段，公共数据，进程目录，进程 ID （这里是不是有问题？）
+* 私有：地址空间，包括代码段、堆、全局变量、栈等，寄存器
+* 共享：公共数据，进程目录，进程 ID （这里是不是有问题？）
 
 ### 线程之间私有和共享的资源
-* 私有：线程栈，寄存器，程序计数器
+* 私有：栈，寄存器，状态、程序计数器
 * 共享：堆，地址空间，全局变量，静态变量
 
 [线程间到底共享了哪些进程资源？](https://www.eet-china.com/mp/a35347.html)
@@ -138,3 +138,7 @@
 ### [CTRL+C和kill的关系](http://blog.sina.com.cn/s/blog_716358dc0100lj6e.html)
 
 CTRL+C向当前用户的进程组（process group，包括parent process，child process）中的child process的发送SIGINT signal，child process被终止后由系统再向parent process发送SIGINT signal，随之parent process被终止。所以单纯的使用kill -SIGINT是无法实现终止一个带有child process的parent process，使用kill -SIGKILL终止parent process，只会导致child process成为孤儿进程。所以如果向使用代码的方式终止带有child process的parent process，必须先将所有child process终止掉，才能让parent process终止。
+
+
+### [协程](https://www.cnblogs.com/Survivalist/p/11527949.html)
+

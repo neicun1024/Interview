@@ -31,6 +31,7 @@ struct test
 ### extern "C"
 * 被extern限定的函数或变量是extern类型的
 * 被extern "C"修饰的变量和函数是按照C语言方式编译和链接的
+
 extern "C"的作用是让C++编译器将extern "C"声明的代码当做C语言代码处理，可以避免C++因符号修饰导致代码不能和C语言库中的符号进行连接的问题
 ```
 #ifdef __cplusplus
@@ -95,11 +96,14 @@ int main() {
 }
 ```
 
+
 ### 用C实现C++的面向对象特性（封装、继承、多态）
+
+[How world one write object-oriented code in C?](https://stackoverflow.com/a/351745)
 * 封装：使用函数指针把属性与方法封装到结构体中
 * 继承：结构体嵌套
 * 多态：父类与子类的函数指针不同
-[How world one write object-oriented code in C?](https://stackoverflow.com/a/351745)
+
 
 ### friend 友元类和友元函数
 * 能访问私有成员
@@ -107,6 +111,7 @@ int main() {
 * 友元关系不可传递
 * 友元关系的单向性
 * 友元声明的形式及数量不受限制
+
 
 ### static_cast
 转换方式：

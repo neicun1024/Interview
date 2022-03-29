@@ -340,30 +340,42 @@ private:
     {
     };
 
-    // void f(const Base &b){
-    //     try{
-    //         const Derived &d = dynamic_cast<const Base &>(b); // 这里会报错，try catch无法捕获到，因为不是运行时错误
-    //         //使用b引用的Derived对象
-    //     }
-    //     catch(std::bad_cast){
-    //         //处理类型转换失败的情况
-    //     }
-    // }
 public:
     void myPrint()
     {
         // 指针类型
         Base *pB = new Base();
-        Derived *pD = dynamic_cast<Derived *>(pB);
+        Derived *pD = dynamic_cast<Derived *>(pB);  // 下行转换
         cout << typeid(pD).name() << endl;
 
         Derived *pD2 = new Derived();
-        Base *pB2 = dynamic_cast<Base *>(pD2);
+        Base *pB2 = dynamic_cast<Base *>(pD2);      // 上行转换
         cout << typeid(pB2).name() << endl;
 
         // 引用类型
-        // Base b;
-        // f(b);
+        Base b;
+        const Base &rb = b;
+        try
+        {
+            const Derived &rd = dynamic_cast<const Derived &>(rb);  // 下行转换
+            cout << typeid(rd).name() << endl;
+        }
+        catch (std::bad_cast)   //处理类型转换失败的情况
+        {
+            cout << "bad_cast!" << endl;
+        }
+
+        Derived d2;
+        const Base &rd2 = d2;
+        try
+        {
+            const Base &rb2 = dynamic_cast<const Base &>(rd2);      // 上行转换
+            cout << typeid(rb2).name() << endl;
+        }
+        catch (std::bad_cast)   //处理类型转换失败的情况
+        {
+            cout << "bad_cast!" << endl;
+        }
     }
 };
 
@@ -997,8 +1009,8 @@ int main()
     // StaticCast staticCast;
     // staticCast.myPrint();
 
-    // DynamicCast dynamicCast;
-    // dynamicCast.myPrint();
+    DynamicCast dynamicCast;
+    dynamicCast.myPrint();
 
     // ReferenceTest referenceTest;
     // referenceTest.myPrint();

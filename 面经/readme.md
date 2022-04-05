@@ -335,6 +335,7 @@
     - ThreadLocal
     - 消息队列有了解吗，kafka了解吗
     - Spring了解吗
+    - HashMap和HashTable的区别
 - 计算机网络
     - TCP三次握手和四次挥手
     - 为什么需要第三次握手

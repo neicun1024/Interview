@@ -73,6 +73,26 @@
 [线程间到底共享了哪些进程资源？](https://www.eet-china.com/mp/a35347.html)
 
 
+## [进程描述符PCB的结构](https://labuladong.github.io/algo/5/35/)
+```
+struct task_struct {
+	// 进程状态
+	long			  state;
+	// 虚拟内存结构体
+	struct mm_struct  *mm;
+	// 进程号
+	pid_t			  pid;
+	// 指向父进程的指针
+	struct task_struct __rcu  *parent;
+	// 子进程列表
+	struct list_head		children;
+	// 存放文件系统信息的指针
+	struct fs_struct		*fs;
+	// 一个数组，包含该进程打开的文件指针
+	struct files_struct		*files;
+};
+```
+
 ## [进程上下文切换](https://cloud.tencent.com/developer/article/1710837)
 
 ### 进程上下文的概念

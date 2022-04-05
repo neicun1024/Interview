@@ -8,7 +8,7 @@
 ### ACID
 - A：原子性（Atomicity）
   - 事务被视为不可分割的最小单元，事务的所有操作要么全部提交成功，要么全部失败回滚。
-  - 回滚可以用回滚日志（Undo Log）来实现，回滚日志记录着事务所执行的修改操作，在回滚时反向执行这些修改操作即可。
+  - 回滚可以用回滚日志（Undo Log）来实现，回滚日志记录着数据的旧值，在回滚时将数据恢复到旧值。
 - C：一致性（Consistency）
   - 数据库在事务执行前后都保持一致性状态。在一致性状态下，所有事务对同一个数据的读取结果都是相同的。
 - I：隔离性（Isolation）
@@ -26,7 +26,7 @@
 
 ## 并发一致性问题和解决方法
 
-| 问题 | 说明 | 举例 | 解决方法 | 封锁级别 | 隔离级别 |
+| 问题 | 说明 | 举例 | 解决方法 | 封锁协议 | 隔离级别 |
 | ---- | ---- | ---- | ---- | ---- | ---- | 
 | 丢失修改 | 一个事务的更新操作被另外一个事务的更新操作替换 | T1和T2两个事务都对一个数据进行修改，T1先修改并提交生效，T2随后修改，T2的修改覆盖了T1的修改 | 加写锁（X锁），使得两个写操作不能同时进行（防止了先写，再写） | 一级封锁协议 | 未提交读（事务中的修改，即使没有提交，对其他事务也是可见的）
 | 读脏数据 | 在不同的事务下，当前事务可以读到另外事务未提交的数据 | T1修改了一个数据但未提交，T2随后读取这个数据，如果T1撤销了这次修改，那么T2读取的数据是脏数据 | 加读锁（S锁），使得读写操作不能同时进行（防止了先写，再读） | 二级封锁协议 | 提交读（一个事务所做的修改在提交之前对其它事务是不可见的）
@@ -42,7 +42,7 @@
 ![20220317142038](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220317142038.png)
 
 - 一个事务对数据对象加了X锁，就可以对其进行读取和更新，加锁期间其它事务不能对该对象加任何锁
-- 一个事务对数据对象加了S锁，就饿可以对其进行读取操作，但是不能进行更新操作，加锁期间其它事务能对该对象加S锁，但不能加X锁
+- 一个事务对数据对象加了S锁，就可以对其进行读取操作，但是不能进行更新操作，加锁期间其它事务能对该对象加S锁，但不能加X锁
 
 
 ## 行级锁、表级锁、意向锁
@@ -64,7 +64,9 @@
 ## 两段锁协议
 
 - 加锁和解锁分为两个阶段进行
-- 可串行化调度是指，通过并发控制，使得并发执行的事务结果与某个串行执行的事务结果相同。串行执行的事务互不干扰，不会出现并发一致性问题。
+- 串行调度：在某个调度中，一个事务的所有调度都结束后，才进行另一个事务的调度。
+- 可串行化调度：通过并发控制，使得并发执行的事务结果与某个串行执行的事务结果相同。串行执行的事务互不干扰，不会出现并发一致性问题。
+- 冲突可串行化调度：如果某个调度可以通过交换非冲突操作后转换为串行调度，那么这个调度就是冲突可串行化调度。[参考](https://geek-docs.com/dbms/dbms-tutorial/dbms-conflict-serializability.html)。
 - 事务遵循两段锁协议是保证可串行化调度的充分条件。例如以下操作满足两段锁协议，它是可串行化调度。
     ```
     lock-x(A)...lock-s(B)...lock-s(C)...unlock(A)...unlock(C)...unlock(B)
@@ -80,6 +82,7 @@
 - 在上面的《并发一致性问题和解决方法》表格中，提到了三种隔离级别，而可串行化是一种更严格的隔离级别
 - 可串行化：强制事务串行执行，这样多个事务互不干扰，不会出现并发一致性问题
 - 该隔离级别需要加锁实现，因为要使用加锁机制保证同一时间只有一个事务执行，也就是保证事务串行执行
+
 ![20220317143952](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220317143952.png)
 
 
@@ -185,3 +188,89 @@ SELECT c FROM t WHERE c BETWEEN 10 and 20 FOR UPDATE;
 
 ## [一条SQL语句在MySQL中是如何执行的？](https://z.itpub.net/article/detail/43FB56B82F2178BB326272D693D6858B)
 
+
+## [MySQL中有哪些日志文件](https://www.jianshu.com/p/edda26a5124f)
+
+### 1. 序言
+![20220405104138](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220405104138.png)
+
+上面是MySQL简化版的体系结构图，可以看到自顶向下主要分成了链接池、SQL接口、解析器、查询优化器、缓存、执行引擎、系统文件和日志文件。系统文件和日志文件共同组成了系统文件层，是Mysql实现数据持久化、MVVC、主从同步等功能的重要一层。
+
+Mysql中存在很多不同的日志，例如：错误日志、通用查询日志、二进制日志（Binlog）、Undo/Redo Log、中继日志（Relay Log）、慢查询日志等。
+
+### 2. 错误日志
+记录MySQL 运行过程中较为严重的警告和错误信息，以及MySQL每次启动和关闭的详细信息，默认是开启的，可以通过`show variables like '%log_error%'`查看。
+
+![20220405103729](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220405103729.png)
+
+其中log_error是定义是否启用错误日志的功能和错误日志的存储位置，可以修改/etc/my.cnf配置文件，添加参数`log_error=/home/keduw/mysql/mysql.err`指定错误日志的路径。
+
+### 3. 通用查询日志
+用来记录用户的所有操作，包括启动和关闭 MySQL 服务、更新语句和查询语句等，默认情况下是关闭，可以通过`show variables like '%general%'`查看。
+
+![20220405104302](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220405104302.png)
+
+一般不开启，会占用大量的磁盘空间。
+
+### 4. 二进制日志
+记录了对MySQL数据库执行的更改操作，并且记录了语句的发生时间、执行时长；但是它不记录select、show等不修改数据库的SQL。默认是关闭，可以通过`show variables like '%log_bin%'`查看是否开启，`show binary logs`查看日志文件，`show variables like '%binlog%'`查看参数配置。
+
+![20220405104400](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220405104400.png)
+
+Binlog有两个重要的使用场景：数据库恢复和主从复制，当需要使用对应功能需要开启Binlog日志。可以修改my.cnf或my.ini配置文件，在[mysqld]下面增加log_bin=mysql_bin_log启动。
+
+主从复制的时候，在主库中开启Binlog功能，这样主库就可以把Binlog传递给从库，从库拿到Binlog后实现数据恢复达到主从数据一致性。数据恢复，可以通过mysqlbinlog工具来恢复数据。
+
+### 5. Undo/Redo日志
+Undo/Redo Log并不属于Mysql Server的日志，而是属于执行引擎InnoDB的日志。
+
+1. Undo日志
+Undo意为撤销或取消，以撤销操作为目的，返回指定某个状态的操作，Undo Log在事务开始前产生。事务在提交时，并不会立刻删除日志，Innodb会将该事务对应的Undo Log放入到删除列表中，通过后台线程进行回收处理。
+
+数据库事务开始之前，会将要修改的记录存放到Undo Log里，当事务回滚时，可以利用Undo Log，撤销未提交的事务。因此依赖Undo Log可以实现事务的原子性和MVCC（多版本并发控制）。
+
+原子性：事务处理过程中，如果出现了错误或者用户执行了ROLLBACK语句，MySQL可以利用Undo Log中的备份将数据恢复到事务开始之前的状态。
+
+MVCC：事务未提交之前，Undo Log保存了未提交之前的版本数据，Undo Log中的数据可作为数据旧版本快照供其他并发事务进行快照读。事务A手动开启事务，执行更新操作，首先会把更新命中的数据备份到 Undo Buffer 中。事务B手动开启事务，执行查询操作，会读取 Undo 日志数据返回，进行快照读。
+
+![20220405105408](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220405105408.png)
+
+1. Redo日志
+Redo意为重做，以恢复操作为目的。Redo Log 是为了实现事务的持久性而出现的产物，在事务执行的过程中如果发生异常（比如：数据库崩溃），在重启MySQL服务的时候，根据Redo Log进行重，进而恢复事务的状态。
+
+Undo Log是在事务开启的时候产生，而Redo Log是在事务执行的过程产生。在事务提交时会将产生Redo Log写入Log Buffer，但并不是随着事务的提交就立刻写入磁盘，而是等到事务操作的脏页写入到磁盘之后，Redo Log占用的空间就可以重用（被覆盖写入）。
+
+Redo Log文件内容是以顺序循环的方式写入文件，写满时则回溯到第一个文件，进行覆盖写。
+
+![20220405105457](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220405105457.png)
+
+如上图所示，Redo Log采用双指针进行维护。Write Pos是当前记录的位置，一边写一边后移，写到最后一个文件末尾后就回到0号文件开头；CheckPoint是当前要擦除的位置，也是往后推移并且循环的，擦除记录前要把记录更新到数据文件；
+
+Write Pos和CheckPoint之间还空着的部分，可以用来记录新的操作。如果Write Pos追上CheckPoint，表示写满，这时候不能再执行新的更新，会停下来先擦掉一些记录。如图：W区则是可以写入的区域，R区则是需要刷盘的内容。
+
+### 6. 中继日志
+中继日志主要是MySQL主从同步的时候会用到，下图是主从同步的原理图：
+
+![20220405105548](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220405105548.png)
+
+主从同步主要分成三步：
+1. 主库将数据库的变更操作记录到Binlog日志文件中
+2. 从库读取主库中的Binlog日志文件信息写入到从库的Relay Log中继日志中
+3. 从库读取中继日志信息在从库中进行Replay，更新从库数据信息
+
+可以看到Relay Log中继日志在从库中担当类似中转的作用。可能会觉得从库读取主库中的Binlog日志为什么不直接执行，而是先写入到Relay Log后面由读出来。
+
+看似多余，其实不然。其实我觉得这里还是出于性能和异常的考虑，Replay的操作要比直接文件写入慢得多，毕竟中间还要经过执行引擎的处理，而且如果从库出现异常，有Relay Log做持久化也可以确保从库恢复的时候数据的完整性。
+
+### 7. 慢查询日志
+记录所有执行时间超时的查询SQL，默认是10秒，方便于查询缓慢的定位和分析。可以通过`show variables like '%slow_query%'`查看是否开启和日志的位置，`show variables like '%long_query_time%'`查看慢查询的阈值。
+
+![20220405105746](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220405105746.png)
+
+## MySQL存储引擎InnoDB
+
+
+## MySQL存储引擎与Myisam
+
+
+## InnoDB与Myisam的区别

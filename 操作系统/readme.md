@@ -180,4 +180,86 @@ compare and swap（比较与交换），是一种有名的无锁算法。无锁�
 CAS 只对单个共享变量有效，当操作涉及跨多个共享变量时 CAS 无效。但是从 JDK 1.5开始，提供了AtomicReference类来保证引用对象之间的原子性，你可以把多个变量放在一个对象里来进行 CAS 操作.所以我们可以使用锁或者利用AtomicReference类把多个共享变量合并成一个共享变量来操作。
 
 
-## 原子操作是如何实现的
+## 公平锁和非公平锁
+- 公平锁：多个线程按照申请锁的顺序去获得锁，线程会直接进入队列去排队，永远都是队列的第一位才能得到锁。
+    - 优点：所有的线程都能得到资源，不会饿死在队列中
+    - 缺点：吞吐量会小，队列里除了第一个线程，其它的线程都会阻塞，CPU唤醒阻塞线程的开销会很大
+- 非公平锁：多个线程去获取锁的时候，会直接去尝试获取，如果获取不到再进入等待队列，如果能获取到，就直接获取到锁
+    - 优点：可以减少CPU需要唤醒的线程的数量，从而减少唤醒线程的开销，吞吐量大
+    - 缺点：可能导致某些线程饿死，长时间获取不到锁
+
+
+## 原子操作
+
+### 原子操作的概念
+原子操作就是一个独立而不可分割的操作。
+
+- 在单核环境中
+  - 一般意义下，原子操作中线程不会被切换，线程切换要么在原子操作之前，要么在原子操作完成之后。
+  - 更广泛的意义下，原子操作是指一系列必须整体完成的操作步骤，如果任何一步操作没有完成，那么所有完成的步骤都必须回滚。
+  - 例如在单核系统里，单个的机器指令可以看成是原子操作（如果有编译器优化、乱序执行等情况除外）；
+- 在多核系统中
+  - 单个的机器指令不是原子操作，因为多核系统里是多指令流并行运行的，一个核在执行一个指令时，其它核同时执行的指令有可能操作同一块内存区域，从而出现数据竞争现象。
+  - 原子操作通常使用内存栅障（memory barrier）来实现，即一个CPU核在执行原子操作时，其它CPU核必须停止对内存或者不对指定的内存进行操作，这样才能避免数据竞争问题
+
+在C++11之前，C++标准并没有对原子操作进行规定。VS和GCC编译器提供的原子操作的API。
+- Windows原子操作API
+
+    Win32 API中常见的原子操作主要有三类
+    - 原子加1减1操作
+      
+      `LONG InterlockedIncrement( LONG volatile* Addend);`
+      `LONG InterlockedDecrement( LONG volatile* Addend);`
+    - 比较并交换操作
+      
+      `LONG InterlockedCompareExchange( LONG volatile*Destination, LONG Exchange, LONG Comperand );`
+      
+      这个操作是先将Comperand的值和Destination指向变量的值进行比较，如果相等就将Exchange变量的值赋给Destination指向的变量。返回值为未修改前的Destination位置的初始值。
+    - 原子写操作
+      
+      `LONG InterlockedExchange( LONG volatile* Target, LONG Value);`
+      
+      InterlockedExchange的作用为将Value的值赋给Target指向的变量，返回Target指向变量未被赋值前的值。
+
+- GCC编译器提供的原子操作API
+    ```
+    type __sync_fetch_and_add (type *ptr, type value);
+    type __sync_fetch_and_sub (type *ptr, type value);
+    type __sync_fetch_and_or (type *ptr, type value);
+    type __sync_fetch_and_and (type *ptr, type value);
+    type __sync_fetch_and_xor (type *ptr, type value);
+    type __sync_fetch_and_nand (type *ptr, type value);
+    type __sync_add_and_fetch (type *ptr, type value);
+    type __sync_sub_and_fetch (type *ptr, type value);
+    type __sync_or_and_fetch (type *ptr, type value);
+    type __sync_and_and_fetch (type *ptr, type value);
+    type __sync_xor_and_fetch (type *ptr, type value);
+    type __sync_nand_and_fetch (type *ptr, type value);
+    ```
+
+- C++11提供的原子操作
+  
+  C++11中在<atomic>中定义了atomic模板类，atomic的模板参数类型可以为int、long、bool等等，C++中称为trivially copyable type。atomic_int、atomic_long为atomic模板实例化后的宏定义。atomic具体的原子操作函数可以参考[这里](http://www.cplusplus.com/reference/atomic/atomic/?kw=atomic)。
+
+
+### 原子操作的底层实现
+
+基于总线加锁和缓存加锁。
+
+#### 总线加锁
+
+早期的时候，当cpu执行lock指令的时候，会直接进行总线锁，就是把总线锁住，这样cpu和内存之间就不能进行通信，如果多核cpu，就出现了一核工作，多核围观的尴尬局面，此时就会出现严重的资源浪费问题，开销比较大。
+
+#### 缓存加锁
+
+后面有了缓存锁，缓存锁不再锁总线，而是在写回内存时，通过一致性机制来保证一个时刻只有一个核心能修改指定的内存区域。
+
+#### 何时使用
+
+有些场景是不能使用的缓存锁的，只能进行总线锁
+
+    - 当操作的数据不能被缓存在处理器内部
+    - 跨多个缓存行操作
+    - 处理器不支持
+
+这篇[博客](https://codelover.me/atomic/)看起来挺硬核的，目前我还不太理解。

@@ -1,8 +1,8 @@
-## 这里存放了我刷过的大厂往年机试题
+# 这里存放了我刷过的大厂往年机试题
 
-### 【2021】阿里巴巴编程题（4星）
+## 【2021】阿里巴巴编程题（4星）
 
-#### 1. 子集
+### 1. 子集
 ![20220314153603](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314153603.png)
 
 ```
@@ -62,7 +62,7 @@ int main(){
 }
 ```
 
-#### 2. 小强爱数学
+### 2. 小强爱数学
 ![20220314153701](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314153701.png)
 
 ```
@@ -91,7 +91,7 @@ int main(){
 }
 ```
 
-#### 3. 二叉树
+### 3. 二叉树
 ![20220315194600](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220315194600.png)
 
 ```
@@ -122,7 +122,7 @@ int main(){
 }
 ```
 
-#### 5. 知识竞赛
+### 5. 知识竞赛
 ![20220314153752](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314153752.png)
 
 ```
@@ -145,7 +145,7 @@ int main(){
 ```
 
 
-#### 6.树上最短链
+### 6.树上最短链
 ![20220314154737](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314154737.png)
 
 ```
@@ -217,7 +217,7 @@ int main(){
 }
 ```
 
-#### 7. 牛牛们吃糖果
+### 7. 牛牛们吃糖果
 ![20220314161624](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314161624.png)
 
 ```
@@ -263,7 +263,7 @@ int main(){
 }
 ```
 
-#### 9. 合法连续子段
+### 9. 合法连续子段
 ![20220314163219](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314163219.png)
 
 ```
@@ -297,9 +297,9 @@ int main(){
 
 
 
-### 拼多多2021笔试真题集
+## 拼多多2021笔试真题集
 
-#### 1. 多多的数字组合
+### 1. 多多的数字组合
 ![20220320144145](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320144145.png)
 
 ```
@@ -334,7 +334,7 @@ int main(){
 }
 ```
 
-#### 2. 多多的字符变换
+### 2. 多多的字符变换
 ![20220320143743](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320143743.png)
 
 ```
@@ -377,7 +377,7 @@ int main(){
 ```
 
 
-#### 3. 多多的求和计算
+### 3. 多多的求和计算
 ![20220320143556](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320143556.png)
 
 ```
@@ -413,7 +413,7 @@ int main(){
 ```
 unordered_map的key为前缀和的模，value为等于key的模的数量
 
-#### 4. 多多的骰子组合
+### 4. 多多的骰子组合
 ![20220320144117](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320144117.png)
 
 ```
@@ -478,9 +478,9 @@ int main(){
 ```
 
 
-### 拼多多2020校招部分编程题合集
+## 拼多多2020校招部分编程题合集
 
-#### 1. 多多的魔术盒子
+### 1. 多多的魔术盒子
 ![20220320165354](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320165354.png)
 
 ```
@@ -505,7 +505,7 @@ int main(){
 二分的思想，从中间的数开始减，使得两边需要减少的次数相同
 
 
-#### 2. 多多的排列函数
+### 2. 多多的排列函数
 ![20220320165444](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320165444.png)
 
 ```
@@ -538,11 +538,11 @@ int main(){
 找规律，最小值由1到n求和决定，最大值由1-到n-1求和决定
 
 
-#### 3. 多多的电子字典（没做出来）
+### 3. 多多的电子字典（没做出来）
 ![20220320175207](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320175207.png)
 
 
-#### 4. 骰子期望
+### 4. 骰子期望
 ![20220320165706](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320165706.png)
 
 ```
@@ -581,7 +581,7 @@ int main(){
 这题属实麻烦。。
 
 
-#### 5. 二维表第k大数(8/10 组用例通过 运行超时)
+### 5. 二维表第k大数(8/10 组用例通过 运行超时)
 ![20220320172351](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320172351.png)
 
 ```
@@ -636,9 +636,9 @@ int main(){
 emmm，看了题解，还是得用二分啊。。
 
 
-### 网易2021校招笔试-C++开发工程师（提前批）
+## 网易2021校招笔试-C++开发工程师（提前批）
 
-#### 1. 平分物品
+### 1. 平分物品
 
 ![20220327143909](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327143909.png)
 
@@ -685,7 +685,7 @@ int main(){
 }
 ```
 
-#### 2. 买票问题(8/20 组用例通过)
+### 2. 买票问题(8/20 组用例通过)
 
 ![20220327143820](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327143820.png)
 
@@ -739,7 +739,7 @@ int main(){
 }
 ```
 
-#### 3. 小易爱回文
+### 3. 小易爱回文
 
 ![20220327144015](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327144015.png)
 
@@ -786,6 +786,6 @@ int main(){
 }
 ```
 
-#### 4. 学术认可
+### 4. 学术认可
 
 ![20220327145232](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327145232.png)

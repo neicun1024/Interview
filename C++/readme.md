@@ -470,6 +470,15 @@ new (place_address) type [size] { braced initializer list }
    5. 将栈顶指针esp回到函数调用前的位置（让栈顶指针往下移动12Byte，即三个参数）
 
 
+### [C语言函数参数压栈顺序为什么是从右往左](https://blog.csdn.net/jiange_zh/article/details/47381597?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_default&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_default&utm_relevant_index=2)
+
+C语言支持不定参函数，也就是函数的参数数量可变。比如printf()函数，原型是`printf(const char* format, ...)`，它是一个不定参函数。我们在实际使用中是通过format中的%占位符来确定参数的个数的。
+
+如果从左往右压栈，那么函数调用时，format最先进栈，之后是各个参数进栈。此时，format上面压着未知个数的参数，想知道参数的个数，必须找到format，而想找到format，则必须知道参数的个数。。
+
+所以参数必须从右往左入栈，这样就能找到format，取得后面的参数个数。
+
+
 ## 内联函数
 
 ### 原理

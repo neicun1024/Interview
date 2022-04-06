@@ -684,9 +684,11 @@ request(handle);    // 将handle()函数作为参数传给request()函数
 
 ### 回调的类型
 1. 同步回调：也叫阻塞式回调。当我们调用某个函数A并以参数的形式传入回调函数后，在A返回之前回调函数会被执行，也就是说我们的主程序会等待回调函数执行完成。
+   
 ![20220405210900](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220405210900.png)
 
 2. 异步回调
+   
 ![20220405211620](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220405211620.png)
 
 ### 异步回调的优点

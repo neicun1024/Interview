@@ -1,9 +1,9 @@
-## 这里存放了计算机网络相关知识
+# 这里存放了计算机网络相关知识
 
-### 网络编程——TCP编程流程
+## 网络编程——TCP编程流程
 [参考网址](https://blog.csdn.net/Eunice_fan1207/article/details/83903148)
 
-#### 服务器：
+### 服务器：
 socket、bind、listen、accept、recv、send、close
 
 1. socket创建网络套接字
@@ -30,6 +30,6 @@ socket、bind、listen、accept、recv、send、close
 7. 关闭连接
 
 
-### 如果服务器和带宽的资源无限，TCP的连接数的上限是多少?
+## 如果服务器和带宽的资源无限，TCP的连接数的上限是多少?
    - [参考](https://mp.weixin.qq.com/s/X6c_H5_4OInR8nFQVn7IMA)
    - 应该是端口号的范围，端口用16位数字表示，范围是0-65535，其中0-1024保留给预定义的服务，而剩下的端口中可使用的端口范围是有具体限制的，可以在 / etc/sysctl.conf 中修改

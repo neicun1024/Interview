@@ -703,3 +703,202 @@ request(handle);    // 将handle()函数作为参数传给request()函数
 ### 异步回调的优点
 1. 在同步模式下，服务调用方会因等待的服务执行而暂停，导致整个线程被阻塞，不适合并发连接的场景，而异步回调解决了这个问题
 2. 程序更加灵活
+
+
+## [malloc底层实现原理](https://blog.csdn.net/mmshixing/article/details/51679571)
+[C++动态内存分配](https://blog.csdn.net/qq_25065595/article/details/107453890)
+
+![20220407183918](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220407183918.png)
+
+这是32位系统，寻址空间是4G，linux系统下0-3G是用户模式，3-4G是内核模式。而在用户模式下又分为代码段、.data段、.bss段、堆、栈。
+
+heap段有个重要的标志：program break。Linux维护一个break指针，这个指针指向堆空间的某个地址。从堆起始地址到break之间的地址空间为映射好的，可以供进程访问；而从break往上，是未映射的地址空间，如果访问这段空间则程序会报错。我们用malloc进行内存分配就是从break往上进行的。
+
+进程所面对的虚拟内存地址空间，只有按页映射到物理内存地址，才能真正使用。受物理存储容量限制，整个堆虚拟内存空间不可能全部映射到实际的物理内存。Linux对堆的管理示意如下：
+
+![20220407184911](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220407184911.png)
+
+获取了break地址，也就是内存申请的初始地址，下面是malloc的整体实现方案：
+
+malloc 函数的实质是它有一个将可用的内存块连接为一个长长的列表的所谓空闲链表。 调用 malloc（）函数时，它沿着连接表寻找一个大到足以满足用户请求所需要的内存块。 然后，将该内存块一分为二（一块的大小与用户申请的大小相等，另一块的大小就是剩下来的字节）。 接下来，将分配给用户的那块内存存储区域传给用户，并将剩下的那块（如果有的话）返回到连接表上。
+
+调用 free 函数时，它将用户释放的内存块连接到空闲链表上。 到最后，空闲链会被切成很多的小内存片段，如果这时用户申请一个大的内存片段， 那么空闲链表上可能没有可以满足用户要求的片段了。于是，malloc（）函数请求延时，并开始在空闲链表上检查各内存片段，对它们进行内存整理，将相邻的小空闲块合并成较大的内存块。
+
+### 1. malloc分配内存前的初始化：
+malloc_init 是初始化内存分配程序的函数。 它完成以下三个目的：将分配程序标识为已经初始化，找到操作系统中最后一个有效的内存地址，然后建立起指向需要管理的内存的指针。
+
+这里需要用到三个全局变量:
+- int has_initialized = 0; /* 初始化标记 */
+- void *managed_memory_start; /* 管理内存起始地址 */
+- void *last_valid_address; /* 操作系统的最后一个有效地址*/
+
+被映射的内存边界（操作系统最后一个有效地址）常被称为系统中断点或者当前中断点。为了指出当前系统中断点，必须使用 sbrk(0) 函数。 sbrk 函数根据参数中给出的字节数移动当前系统中断点，然后返回新的系统中断点。 使用参数 0 只是返回当前中断点。 这里给出 malloc（）初始化代码，它将找到当前中断点并初始化所需的变量：
+
+Linux通过brk和sbrk系统调用操作break指针。两个系统调用的原型如下：
+```
+int brk(void *addr);
+void *sbrk(intptr_t increment);
+```
+
+- brk将break指针直接设置为某个地址，执行成功时返回0，否则返回-1并设置errno为ENOMEM；
+- sbrk将break从当前位置移动increment所指定的增量，成功时返回break移动之前所指向的地址，否则返回(void *)-1。如果将increment设置为0，则可以获得当前break的地址。
+
+### 2. 下为malloc_init()代码：可以看到使用sbrk(0)来获得break地址。
+```
+#include <unistd.h> /*sbrk 函数所在的头文件 */
+void malloc_init()
+{
+    last_valid_address = sbrk(0); /* 用 sbrk 函数在操作系统中
+    取得最后一个有效地址 */
+    managed_memory_start = last_valid_address; /* 将 最 后 一 个
+    有效地址作为管理内存的起始地址 */
+    has_initialized = 1; /* 初始化成功标记 */
+}
+```
+
+### 3. 内存块的获取
+
+所要申请的内存是由多个内存块构成的链表。
+
+1. 内存块的大致结构：每个块由meta区和数据区组成，meta区记录数据块的元信息（数据区大小、空闲标志位、指针等等），数据区是真实分配的内存区域，并且数据区的第一个字节地址即为malloc返回的地址。
+```
+typedef struct s_block *t_block;
+struct s_block {
+    size_t size;    /* 数据区大小 */
+    t_block next;   /* 指向下个块的指针 */
+    int free;       /* 是否是空闲块 */
+    int padding;    /* 填充4字节，保证meta块长度为8的倍数 */
+    char data[1];   /* 这是一个虚拟字段，表示数据块的第一个字节，长度不应计入meta */
+};
+```
+
+现在，为了完全地管理内存，我们需要能够追踪要分配和回收哪些内存。在对内存块进行了 free 调用之后，我们需要做的是诸如将它们标记为未被使用的等事情，并且，在调用 malloc 时，我们要能够定位未被使用的内存块。因此， malloc 返回的每块内存的起始处首先要有这个结构：
+```
+struct mem_control_block
+{	
+	int is_available;//是否空闲
+	int size; //内存块大小
+};
+```
+
+2. 寻找合适的block
+
+现在考虑如何在block链中查找合适的block。一般来说有两种查找算法：
+- First fit：从头开始，使用第一个数据区大小大于要求size的块所谓此次分配的块
+- Best fit：从头开始，遍历所有块，使用数据区大小大于size且差值最小的块作为此次分配的块
+
+两种方法各有千秋，best fit具有较高的内存使用率（payload较高），而first fit具有更好的运行效率。
+
+find_block从frist_block开始，查找第一个符合要求的block并返回block起始地址，如果找不到这返回NULL。这里在遍历时会更新一个叫last的指针，这个指针始终指向当前遍历的block。这是为了如果找不到合适的block而开辟新block使用的。
+
+3. 如果现有block都不能满足size的要求，则需要在链表最后开辟一个新的block。
+
+下为利用sbrk()创建新的block示意代码：
+```
+#define BLOCK_SIZE 24 /* 由于存在虚拟的data字段，sizeof不能正确计算meta长度，这里手工设置 */
+ 
+t_block extend_heap(t_block last, size_t s) {
+    t_block b;
+    b = sbrk(0);
+    if(sbrk(BLOCK_SIZE + s) == (void *)-1){
+        return NULL;
+    }
+    b->size = s;
+    b->next = NULL;
+    if(last){
+        last->next = b;
+    }
+    b->free = 0;
+    return b;
+}
+```
+
+### 4. 内存分配，下为malloc的实现源码
+```
+/**内存控制块数据结构，用于管理所有的内存块
+* is_available: 标志着该块是否可用。1表示可用，0表示不可用
+* size: 该块的大小
+**/
+struct mem_control_block {
+    int is_available;
+    int size;
+};
+ 
+/**在实现malloc时要用到linux下的全局变量
+*managed_memory_start：该指针指向进程的堆底，也就是堆中的第一个内存块
+*last_valid_address：该指针指向进程的堆顶，也就是堆中最后一个内存块的末地址
+**/
+void *managed_memory_start;
+void *last_valid_address;
+ 
+/**malloc()功能是动态的分配一块满足参数要求的内存块
+*numbytes：该参数表明要申请多大的内存空间
+*返回值：函数执行结束后将返回满足参数要求的内存块首地址，要是没有分配成功则返回NULL
+**/
+void *malloc(size_t numbytes) {
+    //游标，指向当前的内存块
+    void *current_location;
+    //保存当前内存块的内存控制结构
+    struct mem_control_block *current_location_mcb;
+    //保存满足条件的内存块的地址用于函数返回
+    void *memory_location;
+    memory_location = NULL;
+    //计算内存块的实际大小，也就是函数参数指定的大小+内存控制块的大小
+    numbytes = numbytes + sizeof(struct mem_control_block);
+    //利用全局变量得到堆中的第一个内存块的地址
+    current_location = managed_memory_start;
+ 
+    //对堆中的内存块进行遍历，找合适的内存块
+    while (current_location != last_valid_address) //检查是否遍历到堆顶了
+    {
+        //取得当前内存块的内存控制结构
+        current_location_mcb = (struct mem_control_block*)current_location;
+        //判断该块是否可用
+        if (current_location_mcb->is_available)
+            //检查该块大小是否满足
+            if (current_location_mcb->size >= numbytes)
+            {
+                //满足的块将其标志为不可用
+                current_location_mcb->is_available = 0;
+                //得到该块的地址，结束遍历
+                memory_location = current_location;
+                break;
+            }
+        //取得下一个内存块
+        current_location = current_location + current_location_mcb->size;
+    }
+ 
+    //在堆中已有的内存块中没有找到满足条件的内存块时执行下面的函数
+    if (!memory_location)
+    {
+        //向操作系统申请新的内存块
+        if (sbrk(numbytes) == -1)
+            return NULL;//申请失败，说明系统没有可用内存
+        memory_location = last_valid_address;
+        last_valid_address = last_valid_address + numbytes;
+        current_location_mcb = (struct mem_control_block)memory_location;
+        current_location_mcb->is_available = 0;
+        current_location_mcb->size = numbytes;
+    }
+    //到此已经得到所要的内存块，现在要做的是越过内存控制块返回内存块的首地址
+    memory_location = memory_location + sizeof(struct mem_control_block);
+    return memory_location;
+}
+```
+
+### 5. free的实现源码
+```
+/**free()功能是将参数指向的内存块进行释放
+*firstbyte：要释放的内存块首地址
+*返回值：空
+**/
+void free(void *firstbyte)
+{
+    struct mem_control_block *mcb;
+    //取得该块的内存控制块的首地址
+    mcb = firstbyte - sizeof(struct mem_control_block);
+    //将该块标志设为可用
+    mcb->is_available = 1;
+    return;
+}
+```

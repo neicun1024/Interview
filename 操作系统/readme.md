@@ -150,6 +150,8 @@
     * 互斥锁/量（mutex）：提供了以排他方式防止数据结构被并发修改的方法
     * 读写锁（reader-writer lock）：允许多个线程同时读共享数据，而对写操作是互斥的
     * 自旋锁（spin lock）与互斥锁类似，都是为了保护共享资源。互斥锁是当资源被占用，申请者进入睡眠状态；而自旋锁则循环检测保持者是否已经释放锁
+      * 优缺点：阻塞和唤醒线程的开销是比较高的，如果同步代码块的内容并不多，不如让它自旋地尝试获取锁，从而避免上下文切换等开销，提高了效率；但是如果这把锁一直不能被释放，那么自旋锁会白白浪费处理器资源
+      * 适用场景：并发度不是特别高的场景，以及临界区比较短小的情况
     * 条件变量（condition）：可以以原子的方式阻塞进程，直到某个特定条件为真为止。对条件的测试是在互斥锁的保护下进行的。条件变量始终与互斥锁一起使用
 * 信号量机制(Semaphore)
     * 无名线程信号量
@@ -256,9 +258,6 @@ struct task_struct {
 ## [CTRL+C和kill的关系](http://blog.sina.com.cn/s/blog_716358dc0100lj6e.html)
 
 CTRL+C向当前用户的进程组（process group，包括parent process，child process）中的child process的发送SIGINT signal，child process被终止后由系统再向parent process发送SIGINT signal，随之parent process被终止。所以单纯的使用kill -SIGINT是无法实现终止一个带有child process的parent process，使用kill -SIGKILL终止parent process，只会导致child process成为孤儿进程。所以如果向使用代码的方式终止带有child process的parent process，必须先将所有child process终止掉，才能让parent process终止。
-
-
-## [协程](https://www.cnblogs.com/Survivalist/p/11527949.html)
 
 
 ## [悲观锁和乐观锁](https://zhuanlan.zhihu.com/p/40211594)

@@ -123,7 +123,7 @@ INSERT、UPDATE、DELETE 操作会创建一个日志，并将事务版本号 TRX
 
 ### ReadView
 
-MVCC 维护了一个 ReadView 结构，主要包含了当前系统未提交的事务列表 TRX_IDs {TRX_ID_1, TRX_ID_2, ...}，还有该列表的最小值 TRX_ID_MIN 和 TRX_ID_MAX。
+MVCC 维护了一个 ReadView 结构，主要包含了当前系统未提交的事务列表 TRX_IDs {TRX_ID_1, TRX_ID_2, ...}，还有该列表的最小值 TRX_ID_MIN 和最大值 TRX_ID_MAX。
 
 ![20220317152441](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220317152441.png)
 
@@ -313,7 +313,7 @@ MyISAM的主要特性：
 ### MEMORY存储引擎
 MEMORY存储引擎将表中的数据存储到内存中，为查询和引用其他表数据提供快速访问。
 
-### InnoDB与Myisam的区别
+### 三者的区别
 
 在实际工作中，选择一个合适的存储引擎是一个比较复杂的问题。每种存储引擎都有自己的优缺点，不能笼统地说谁比谁好。但建议选择使用InnoDB。
 
@@ -411,3 +411,10 @@ MySQL中InnoDB页的大小默认是16KB，假设一行数据的大小是1KB，�
 
 回答：阶数就是通过能存放的元素上限计算出来的。
 
+
+## 关系型数据库的范式
+
+1. 第一范式（1NF）：属性不可分，只要是关系型数据库就满足第一范式
+2. 第二范式（2NF）：在第一范式的基础上，所有非主属性完全函数依赖于键码
+3. 第三范式（3NF）：在第二范式的基础上，所有非主属性不传递函数依赖于键码
+4. BCNF：在第三范式的基础上，所有主属性完全函数依赖且不传递函数依赖于键码

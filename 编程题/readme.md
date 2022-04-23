@@ -789,3 +789,93 @@ int main(){
 ### 4. 学术认可
 
 ![20220327145232](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327145232.png)
+
+
+
+## 网易互娱雷火校园招聘试卷-游戏研发工程师（第一批）
+
+### 1. 窗口点击模拟（段错误）
+
+![20220423164127](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220423164127.png)
+
+```
+# include<bits/stdc++.h>
+using namespace std;
+
+const int W = 3840;
+const int H = 2160;
+
+class Window{
+public:
+    int id;
+    int x, y;
+    int w, h;
+    Window* prev;
+    Window* next;
+    Window(int id, int x, int y, int w, int h):id(id), x(x), y(y), w(w), h(h), prev(nullptr), next(nullptr){};
+};
+
+class Test{
+public:
+    Window *head, *tail;
+    Test(){
+        head->next = tail;
+        tail->prev = head;
+    }
+    
+    void run(int x, int y){
+        int ans = 0;
+        Window* cur = head->next;
+        while(cur!=tail){
+            if(in_range(x, y, cur)){
+                move(cur);
+                cout<<cur->id<<endl;
+                break;
+            }
+            cur = cur->next;
+        }
+        cout<<-1<<endl;
+    }
+    
+    void add_head(Window* win){
+        win->prev = head;
+        win->next = head->next;
+        win->prev->next = win;
+        win->next->prev = win;
+    }
+
+    void move(Window* win){
+        win->prev->next = win->next;
+        win->next->prev = win->prev;
+        add_head(win);
+    }
+    
+    bool in_range(int x, int y, Window* win){
+        if(x>=win->x && x<=win->x+win->w && y>=win->y && y<=win->y+win->h){
+            return true;
+        }
+        return false;
+    }
+};
+
+int main(){
+    int n, m;
+    cin>>n>>m;
+    
+    Test test;
+
+    for(int i=1; i<=n; ++i){
+        int x, y, w, h;
+        cin>>x>>y>>w>>h;
+        Window* tmp = new Window(i, x, y, w, h);
+        test.add_head(tmp);
+    }
+    
+    while(m--){
+        int x, y;
+        cin>>x>>y;
+        test.run(x, y);
+    }
+    return 0;
+}
+```

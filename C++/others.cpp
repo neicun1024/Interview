@@ -345,11 +345,11 @@ public:
     {
         // 指针类型
         Base *pB = new Base();
-        Derived *pD = dynamic_cast<Derived *>(pB);  // 下行转换
+        Derived *pD = dynamic_cast<Derived *>(pB); // 下行转换
         cout << typeid(pD).name() << endl;
 
         Derived *pD2 = new Derived();
-        Base *pB2 = dynamic_cast<Base *>(pD2);      // 上行转换
+        Base *pB2 = dynamic_cast<Base *>(pD2); // 上行转换
         cout << typeid(pB2).name() << endl;
 
         // 引用类型
@@ -357,10 +357,10 @@ public:
         const Base &rb = b;
         try
         {
-            const Derived &rd = dynamic_cast<const Derived &>(rb);  // 下行转换
+            const Derived &rd = dynamic_cast<const Derived &>(rb); // 下行转换
             cout << typeid(rd).name() << endl;
         }
-        catch (std::bad_cast)   //处理类型转换失败的情况
+        catch (std::bad_cast) //处理类型转换失败的情况
         {
             cout << "bad_cast!" << endl;
         }
@@ -369,10 +369,10 @@ public:
         const Base &rd2 = d2;
         try
         {
-            const Base &rb2 = dynamic_cast<const Base &>(rd2);      // 上行转换
+            const Base &rb2 = dynamic_cast<const Base &>(rd2); // 上行转换
             cout << typeid(rb2).name() << endl;
         }
-        catch (std::bad_cast)   //处理类型转换失败的情况
+        catch (std::bad_cast) //处理类型转换失败的情况
         {
             cout << "bad_cast!" << endl;
         }
@@ -983,6 +983,61 @@ public:
     }
 };
 
+class CircularReferenceTest
+{
+private:
+    class A;
+    class B;
+
+    class A
+    {
+    public:
+        int va;
+        B *b;
+
+    public:
+        A() : va(1), b(nullptr)
+        {
+            cout << "now is in default constructor of A" << endl;
+        };
+        ~A()
+        {
+            cout << "now is in destructor of A" << endl;
+            delete b;
+        }
+    };
+
+    class B
+    {
+    public:
+        int vb;
+        A *a;
+
+    public:
+        B() : vb(2), a(nullptr)
+        {
+            cout << "now is in default constructor of B" << endl;
+        };
+        ~B()
+        {
+            cout << "now is in destructor of B" << endl;
+            delete a;
+        }
+    };
+
+public:
+    void myPrint()
+    {
+        A *a = new A();
+        B *b = new B();
+        a->b = b;
+        b->a = a;
+
+        delete a;
+        delete b;
+    }
+};
+
 int main()
 {
     // ConstTest constTest;
@@ -1009,8 +1064,8 @@ int main()
     // StaticCast staticCast;
     // staticCast.myPrint();
 
-    DynamicCast dynamicCast;
-    dynamicCast.myPrint();
+    // DynamicCast dynamicCast;
+    // dynamicCast.myPrint();
 
     // ReferenceTest referenceTest;
     // referenceTest.myPrint();
@@ -1028,6 +1083,9 @@ int main()
 
     // SmartPtrTest smartPtrTest;
     // smartPtrTest.myPrint();
+
+    CircularReferenceTest circularReferenceTest;
+    circularReferenceTest.myPrint();
 
     return 0;
 }

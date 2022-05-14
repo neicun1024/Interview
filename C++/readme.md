@@ -931,3 +931,8 @@ C++程序默认的内存管理（new，delete，malloc，free）会频繁地在�
 
 ![20220514155756](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220514155756.png)
 
+
+## [静态链接和动态链接](https://blog.csdn.net/kang___xi/article/details/80210717)
+
+## [虚继承实现原理（虚基类表指针与虚基类表）](https://blog.csdn.net/longlovefilm/article/details/80558879)
+

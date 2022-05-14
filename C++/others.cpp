@@ -1078,14 +1078,14 @@ int main()
     // LambdaTest lambdaTest;
     // lambdaTest.myPrint();
 
-    // StackStorageTest stackStorageTest;
-    // stackStorageTest.myPrint();
+    StackStorageTest stackStorageTest;
+    stackStorageTest.myPrint();
 
     // SmartPtrTest smartPtrTest;
     // smartPtrTest.myPrint();
 
-    CircularReferenceTest circularReferenceTest;
-    circularReferenceTest.myPrint();
+    // CircularReferenceTest circularReferenceTest;
+    // circularReferenceTest.myPrint();
 
     return 0;
 }

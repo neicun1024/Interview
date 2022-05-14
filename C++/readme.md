@@ -514,7 +514,7 @@ C语言支持不定参函数，也就是函数的参数数量可变。比如prin
 ## lambda表达式
 lambda表达式是C++11中最重要也最常用的特性之一，用于定义匿名函数，并且可以捕获一定范围内的变量
 
-语法形式： \[capture](params) mutable exception->ret{body;};
+语法形式： \[capture](params) mutable exception->ret{body};
 
 其中capture是捕获列表，params是参数表，mutable用来说明是否可以修改捕获的变量，exception是异常设定，ret是返回值类型，body是函数体；
 

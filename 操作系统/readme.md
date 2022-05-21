@@ -206,7 +206,7 @@ struct task_struct {
 
 进程硬件上下文包含了当前cpu的一组寄存器的集合，arm64中使用task_struct结构的thread成员的cpu_context成员来描述，包括x19-x28, sp, pc等
 
-![20220307203355](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220307203355.png)
+![20220307203355](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220307203355.png)
 
 ### 上下文切换详细过程
 进程上下文切换主要涉及到两部分主要过程：进程地址空间切换和处理器状态切换。
@@ -216,7 +216,7 @@ struct task_struct {
 
 
 ### 进程地址空间切换
-![20220307204625](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220307204625.png)
+![20220307204625](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220307204625.png)
 
 - 进程地址空间指的是进程所拥有的虚拟地址空间，而这个地址空间是假的，是linux内核通过数据结构来描述出来的，从而使得每一个进程都感觉到自己拥有整个内存的假象，cpu访问的指令和数据最终会落实到实际的物理地址，对于进程而言通过缺页异常来分配和建立页表映射
 - 进程地址空间内有进程运行的指令和数据，因此当调度器从其他进程重新切换到我的时候，为了保证当前进程访问的虚拟地址是自己的，必须切换地址空间
@@ -227,14 +227,14 @@ struct task_struct {
 
 
 ### 处理器状态（硬件上下文）切换
-![20220307210119](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220307210119.png)
+![20220307210119](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220307210119.png)
 
 - 由于用户空间通过异常/中断进入内核空间的时候都需要保存现场，也就是保存发生异常/中断时的所有通用寄存器的值，内核会把“现场”保存到每个进程特有的进程内核栈中，并用pt_regs结构来描述，当异常/中断处理完成之后会返回用户空间，返回之前会恢复之前保存的“现场”，用户程序继续执行
 - 当进程切换的时候，当前进程被时钟中断打断，将发生中断时的现场保存到进程内核栈（如：sp, lr等），然后会切换到下一个进程，当再次切换回来的时候，返回用户空间的时候会恢复之前的现场，进程就可以继续执行（执行之前被中断打断的下一条指令，继续使用自己用户态sp），这对于用户进程来说是透明的
 
 
 ### 普通用户进程、普通用户线程、内核线程切换的差别
-![20220307212446](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220307212446.png)
+![20220307212446](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220307212446.png)
 内核地址空间切换的时候有以下原则：看的是进程描述符的mm_struct结构，即是成员mm:
 1. 如果mm为NULL，则表示即将切换的是内核线程，不需要切换地址空间（所有任务共享内核地址空间）
 2. 内核线程会借用前一个用户进程的mm，赋值到自己的active_mm（本身的mm为空），进程切换的时候就会比较前一个进程的active_mm和当前进程的mm

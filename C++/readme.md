@@ -445,24 +445,24 @@ new (place_address) type [size] { braced initializer list }
 - EDI：目的变址寄存器
 
 ### 过程
-![20220307193704](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220307193704.png)
+![20220307193704](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220307193704.png)
 1. 函数调用
-![20220307200307](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220307200307.png)
+![20220307200307](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220307200307.png)
    1. 将参数从右往左入栈
 2. 保护现场
-   ![20220307193814](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220307193814.png)
+   ![20220307193814](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220307193814.png)
    1. 将函数的返回地址入栈（编译器隐式地执行**push eip**指令）
    2. 将ebp入栈（因为每个函数都有自己的栈区域，所以栈基址也是不一样的，现在进入了一个中断函数，函数执行过程中也需要ebp寄存器）
    3. 将栈顶地址作为该函数的栈基址（将栈底指针指向栈顶指针所指的地址），确定被调用的函数的栈区域（ebp为栈底，esp为栈顶）
    4. 将栈顶指针往上移动48h来将两个函数的栈区域隔开一段距离，该间隔区域的大小固定为40h，即64Byte，另外8h为预留出的存储局部变量的区域
-   ![20220307200138](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220307200138.png)
+   ![20220307200138](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220307200138.png)
    1. 将EBX、ESI、EDI入栈
    2. 将留出的48h的内存区域赋值为0xCCCCCCCCh
 3. 执行子函数
-   ![20220307193836](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220307193836.png)
+   ![20220307193836](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220307193836.png)
    1. 根据ebp来计算被调用的函数中的局部变量的内存地址，并存入相应位置
 4. 恢复现场
-   ![20220307201041](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220307201041.png)
+   ![20220307201041](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220307201041.png)
    1. 三条出栈指令，将EDI、ESI、EBX出栈
    2. 将ebp的值赋给esp（让esp跳过了一段区域，就是间隔区域和局部数据区域，因为函数已经退出，所以这两个区域没有用了）
    3. 将ebp出栈

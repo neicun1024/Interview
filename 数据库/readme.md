@@ -17,7 +17,7 @@
   - 一旦事务提交，则其所做的修改将会永远保存到数据库中。即使系统发生崩溃，事务执行的结果也不能丢失。
   - 系统发生崩溃可以用重做日志（Redo Log）进行恢复，从而实现持久性。与回滚日志记录数据的逻辑修改不同，重做日志记录的是数据页的物理修改。
   
-  ![20220317144945](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220317144945.png)
+  ![20220317144945](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220317144945.png)
 
   - 只有满足一致性，事务的执行结果才是正确的
   - 在无并发的情况下，事务串行执行，隔离性一定能够满足。此时只要能满足原子性，就一定能满足一致性
@@ -39,7 +39,7 @@
 - 互斥锁（Exclusive），简写为X锁，又称写锁
 - 共享锁（Shared），简写为S锁，又称读锁
 
-![20220317142038](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220317142038.png)
+![20220317142038](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220317142038.png)
 
 - 一个事务对数据对象加了X锁，就可以对其进行读取和更新，加锁期间其它事务不能对该对象加任何锁
 - 一个事务对数据对象加了S锁，就可以对其进行读取操作，但是不能进行更新操作，加锁期间其它事务能对该对象加S锁，但不能加X锁
@@ -52,7 +52,7 @@
 - 当事务想对表加表级锁时，需要先检测表的每一行是否已经有行级锁，如果都没有行级锁，才能加上表级锁，这个检测过程是非常耗时的，意向锁就是用于解决这个问题
 - 当表中的任意一行加了行级锁，这个表就加了意向锁，那么当事务想对表加表级锁时，只需要检查是否存在意向锁，节省了很多检测时间
 
-![20220317142458](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220317142458.png)
+![20220317142458](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220317142458.png)
 
 - 意向锁分为IX锁和IS锁，分别代表写和读
 - 一个事务在获得某个数据行对象的 S 锁之前，必须先获得表的 IS 锁或者更强的锁
@@ -83,7 +83,7 @@
 - 可串行化：强制事务串行执行，这样多个事务互不干扰，不会出现并发一致性问题
 - 该隔离级别需要加锁实现，因为要使用加锁机制保证同一时间只有一个事务执行，也就是保证事务串行执行
 
-![20220317143952](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220317143952.png)
+![20220317143952](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220317143952.png)
 
 
 ## MVCC（多版本并发控制）
@@ -117,7 +117,7 @@ UPDATE t SET x="c" WHERE id=1;
 ```
 因为没有使用 *START TRANSACTION* 将上面的操作当成一个事务来执行，根据 MySQL 的 AUTOCOMMIT 机制，每个操作都会被当成一个事务来执行，所以上面的操作总共涉及到三个事务。快照中除了记录事务版本号 TRX_ID 和操作之外，还记录了一个 bit 的 DEL 字段，用于标记是否被删除。
 
-![20220317145749](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220317145749.png)
+![20220317145749](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220317145749.png)
 
 INSERT、UPDATE、DELETE 操作会创建一个日志，并将事务版本号 TRX_ID 写入。DELETE 可以看成是一个特殊的 UPDATE，还会额外将 DEL 字段设置为 1。
 
@@ -125,7 +125,7 @@ INSERT、UPDATE、DELETE 操作会创建一个日志，并将事务版本号 TRX
 
 MVCC 维护了一个 ReadView 结构，主要包含了当前系统未提交的事务列表 TRX_IDs {TRX_ID_1, TRX_ID_2, ...}，还有该列表的最小值 TRX_ID_MIN 和最大值 TRX_ID_MAX。
 
-![20220317152441](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220317152441.png)
+![20220317152441](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220317152441.png)
 
 在进行 SELECT 操作时，根据数据行快照的 TRX_ID 与 TRX_ID_MIN 和 TRX_ID_MAX 之间的关系，从而判断数据行快照是否可以使用：
 - TRX_ID < TRX_ID_MIN，表示该数据行快照是在当前所有未提交事务之前进行更改的，因此可以使用

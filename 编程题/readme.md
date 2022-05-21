@@ -3,7 +3,7 @@
 ## 【2021】阿里巴巴编程题（4星）
 
 ### 1. 子集
-![20220314153603](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314153603.png)
+![20220314153603](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220314153603.png)
 
 ```
 # include<bits/stdc++.h>
@@ -63,7 +63,7 @@ int main(){
 ```
 
 ### 2. 小强爱数学
-![20220314153701](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314153701.png)
+![20220314153701](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220314153701.png)
 
 ```
 # include<bits/stdc++.h>
@@ -92,7 +92,7 @@ int main(){
 ```
 
 ### 3. 二叉树
-![20220315194600](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220315194600.png)
+![20220315194600](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220315194600.png)
 
 ```
 # include<bits/stdc++.h>
@@ -123,7 +123,7 @@ int main(){
 ```
 
 ### 5. 知识竞赛
-![20220314153752](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314153752.png)
+![20220314153752](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220314153752.png)
 
 ```
 # include<bits/stdc++.h>
@@ -146,7 +146,7 @@ int main(){
 
 
 ### 6.树上最短链
-![20220314154737](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314154737.png)
+![20220314154737](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220314154737.png)
 
 ```
 # include<bits/stdc++.h>
@@ -218,7 +218,7 @@ int main(){
 ```
 
 ### 7. 牛牛们吃糖果
-![20220314161624](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314161624.png)
+![20220314161624](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220314161624.png)
 
 ```
 # include<bits/stdc++.h>
@@ -264,7 +264,7 @@ int main(){
 ```
 
 ### 9. 合法连续子段
-![20220314163219](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220314163219.png)
+![20220314163219](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220314163219.png)
 
 ```
 # include<bits/stdc++.h>
@@ -300,7 +300,7 @@ int main(){
 ## 拼多多2021笔试真题集
 
 ### 1. 多多的数字组合
-![20220320144145](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320144145.png)
+![20220320144145](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220320144145.png)
 
 ```
 # include<bits/stdc++.h>
@@ -335,7 +335,7 @@ int main(){
 ```
 
 ### 2. 多多的字符变换
-![20220320143743](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320143743.png)
+![20220320143743](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220320143743.png)
 
 ```
 # include<bits/stdc++.h>
@@ -378,7 +378,7 @@ int main(){
 
 
 ### 3. 多多的求和计算
-![20220320143556](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320143556.png)
+![20220320143556](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220320143556.png)
 
 ```
 # include<bits/stdc++.h>
@@ -414,7 +414,7 @@ int main(){
 unordered_map的key为前缀和的模，value为等于key的模的数量
 
 ### 4. 多多的骰子组合
-![20220320144117](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320144117.png)
+![20220320144117](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220320144117.png)
 
 ```
 # include<bits/stdc++.h>>
@@ -481,7 +481,7 @@ int main(){
 ## 拼多多2020校招部分编程题合集
 
 ### 1. 多多的魔术盒子
-![20220320165354](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320165354.png)
+![20220320165354](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220320165354.png)
 
 ```
 # include<bits/stdc++.h>
@@ -506,7 +506,7 @@ int main(){
 
 
 ### 2. 多多的排列函数
-![20220320165444](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320165444.png)
+![20220320165444](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220320165444.png)
 
 ```
 # include<bits/stdc++.h>
@@ -539,11 +539,11 @@ int main(){
 
 
 ### 3. 多多的电子字典（没做出来）
-![20220320175207](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320175207.png)
+![20220320175207](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220320175207.png)
 
 
 ### 4. 骰子期望
-![20220320165706](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320165706.png)
+![20220320165706](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220320165706.png)
 
 ```
 # include<bits/stdc++.h>
@@ -582,7 +582,7 @@ int main(){
 
 
 ### 5. 二维表第k大数(8/10 组用例通过 运行超时)
-![20220320172351](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220320172351.png)
+![20220320172351](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220320172351.png)
 
 ```
 # include<bits/stdc++.h>
@@ -640,7 +640,7 @@ emmm，看了题解，还是得用二分啊。。
 
 ### 1. 平分物品
 
-![20220327143909](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327143909.png)
+![20220327143909](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220327143909.png)
 
 ```
 # include<bits/stdc++.h>
@@ -687,7 +687,7 @@ int main(){
 
 ### 2. 买票问题(8/20 组用例通过)
 
-![20220327143820](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327143820.png)
+![20220327143820](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220327143820.png)
 
 ```
 # include<bits/stdc++.h>
@@ -741,7 +741,7 @@ int main(){
 
 ### 3. 小易爱回文
 
-![20220327144015](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327144015.png)
+![20220327144015](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220327144015.png)
 
 ```
 # include<bits/stdc++.h>
@@ -788,7 +788,7 @@ int main(){
 
 ### 4. 学术认可
 
-![20220327145232](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220327145232.png)
+![20220327145232](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220327145232.png)
 
 
 

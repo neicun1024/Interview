@@ -20,7 +20,7 @@
 - 虚拟机：在物理硬件虚拟成多套硬件后，需要在每套硬件上都部署一个操作系统，接着在这些操作系统上运行相应的应用程序
 - 缺点：占用空间大、启动慢、虚拟机软件可能收费
 
-![20220323102426](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220323102426.png)
+![20220323102426](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220323102426.png)
 
 #### Docker
 
@@ -28,7 +28,7 @@
 
 - Docker容器内的应用程序直接运行在宿主机的内核上，Docker引擎将一些各自独立的应用程序和它们各自的依赖打包，相互独立直接运行于未经虚拟化的宿主机硬件上，同时各个容器也没有自己的内核，比传统虚拟机更轻便
 
-![20220323102504](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220323102504.png)
+![20220323102504](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220323102504.png)
  
 #### K8S
 [Kubernetes官方介绍](https://kubernetes.io/zh/docs/concepts/overview/what-is-kubernetes/)
@@ -50,7 +50,7 @@
 - Kubernetes以更高效的方式跨集群自动分发和调度应用容器
 - 一个Kubernetes集群包含两种类型的资源：Master调度整个集群、Nodes负责运行应用
 
-![20220306132945](https://raw.githubusercontent.com/neicun1024/Interview/main/images_for_markdown/20220306132945.png)
+![20220306132945](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220306132945.png)
 
 - Master负责管理整个集群。Master协调集群中的所有活动，例如调度应用、维护应用的所需状态、应用扩容以及推出新的更新
 - Node是一个虚拟机或者物理机，它在Kubernetes集群中充当工作机器的角色。每个Node都有Kubelet，

@@ -31,8 +31,6 @@
 
 ### [https的通信过程](https://blog.csdn.net/u010164190/article/details/104582419)
 
-![20220413104007](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220413104007.png)
-
 1. 客户端发送请求到服务器端;
 2. 服务器端返回证书和公开密钥，公开密钥作为证书的一部分而存在;
 3. 客户端验证证书和公开密钥的有效性，如果有效，则生成共享密钥并使用公开密钥加密发送到服务器端;

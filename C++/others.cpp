@@ -659,7 +659,7 @@ public:
 
         cout << "Address : var " << &var << endl;
         cout << "Address : arr " << &arr << endl;
-        cout << "Address : arr " << &var2 << endl;
+        cout << "Address : var2 " << &var2 << endl;
         strcpy(arr, "hello world!");
         cout << "var:" << hex << var << endl; // 将变量 var 以 16 进制输出
         cout << "arr:" << arr << endl;

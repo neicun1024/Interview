@@ -162,6 +162,8 @@
 *线程间的通信目的主要是用于线程同步，所以线程没有像进程通信中的用于数据交换的通信机制*
 
 
+## [进程同步和进程通信](https://blog.csdn.net/weixin_41413441/article/details/80548683)
+
 ## 进程之间私有和共享的资源
 * 私有：地址空间，包括代码段、堆、全局变量、栈等，寄存器
 * 共享：公共数据，进程目录，进程 ID （这里是不是有问题？）
@@ -257,7 +259,7 @@ struct task_struct {
 
 ## [CTRL+C和kill的关系](http://blog.sina.com.cn/s/blog_716358dc0100lj6e.html)
 
-CTRL+C向当前用户的进程组（process group，包括parent process，child process）中的child process的发送SIGINT signal，child process被终止后由系统再向parent process发送SIGINT signal，随之parent process被终止。所以单纯的使用kill -SIGINT是无法实现终止一个带有child process的parent process，使用kill -SIGKILL终止parent process，只会导致child process成为孤儿进程。所以如果向使用代码的方式终止带有child process的parent process，必须先将所有child process终止掉，才能让parent process终止。
+CTRL+C向当前用户的进程组（process group，包括parent process，child process）中的child process发送SIGINT signal，child process被终止后由系统再向parent process发送SIGINT signal，随之parent process被终止。所以单纯的使用kill -SIGINT是无法实现终止一个带有child process的parent process，使用kill -SIGKILL终止parent process，只会导致child process成为孤儿进程。所以如果向使用代码的方式终止带有child process的parent process，必须先将所有child process终止掉，才能让parent process终止。
 
 
 ## [悲观锁和乐观锁](https://zhuanlan.zhihu.com/p/40211594)

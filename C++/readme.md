@@ -49,8 +49,10 @@ void *memset(void *, int, size_t);
 若定义了与struct同名的函数后，该struct只代表函数，不代表结构体
 
 ## struct和class的区别
-1. 默认的继承访问权限不同。struct是public的，class是private的
-2. 默认的数据访问权限不同。struct是public的，class是private的
+1. struct一般用于描述一个数据结构集合，而class是对一个对象数据的封装；
+2. 默认的继承访问权限不同。struct是public的，class是private的；
+3. 默认的数据访问权限不同。struct是public的，class是private的
+4. class关键字可以用于定义模板参数，struct不行；
 
 ## union
 联合（union）是一种节省空间的特殊的类，一个 union 可以有多个数据成员，但是在任意时刻只有一个数据成员可以有值。当某个成员被赋值后其他成员变为未定义状态。联合有如下特点：
@@ -389,6 +391,23 @@ destructor of A
 * 构造函数不能是虚函数（因为在调用构造函数时，虚表指针并没有在对象的内存空间中，必须要构造函数调用完成后才会形成虚表指针）
 * 内联函数不能是表现多态性时的虚函数
 
+## 虚表指针初始化
+
+在初始化列表前初始化。
+
+### 无继承时
+1. 分配内存
+2. 初始化列表之前赋值虚表指针
+3. 列表初始化
+4. 执行构造函数体
+
+### 有继承时
+1. 分配内存
+2. 基类构造过程（按照无继承来）
+3. 初始化子类虚表指针
+4. 子类列表初始化
+5. 执行子类构造函数体
+
 ## 虚继承
 
 ## 虚继承和虚函数
@@ -525,6 +544,73 @@ C语言支持不定参函数，也就是函数的参数数量可变。比如prin
 2. **inline 函数无法随着函数库升级而升级。inline函数的改变需要重新编译，不像 non-inline 可以直接链接**
 3. **是否内联，程序员不可控。内联函数只是对编译器的建议，是否对函数内联，决定权在于编译器**
 
+## 类中的内联函数
+1. 类中的函数会自动转换为内联函数（内联函数只是对编译器的建议，是否对函数内联，决定权在于编译器），在类内定义为隐式内联，在类内声明、类外定义需要显示内联，定义时写上inline
+```
+// 声明1（加 inline，建议使用）
+inline int functionName(int first, int second,...);
+
+// 声明2（不加 inline）
+int functionName(int first, int second,...);
+
+// 定义
+inline int functionName(int first, int second,...) {/****/};
+
+// 类内定义，隐式内联
+class A {
+    int doA() { return 0; }         // 隐式内联
+}
+
+// 类外定义，需要显式内联
+class A {
+    int doA();
+}
+inline int A::doA() { return 0; }   // 需要显式内联
+```
+
+## 虚函数可以是内联函数吗？
+1. 虚函数可以是内联函数，内联是可以修饰虚函数的，但是当虚函数表现多态性的时候不能内联
+2. 内联函数是在编译期建议编译器内联，而虚函数的多态性在运行期，编译器无法知道运行期调用哪个代码，因此虚函数表现为多态性时不可以内联
+3. inline virtual唯一可以内联的时候是：编译器知道所调用的对象是哪个类（如Base::who()），这只有在编译期具有实际对象而不是对象的指针或引用时才会发生
+```
+#include <iostream>  
+using namespace std;
+class Base
+{
+public:
+	inline virtual void who()
+	{
+		cout << "I am Base\n";
+	}
+	virtual ~Base() {}
+};
+class Derived : public Base
+{
+public:
+	inline void who()  // 不写inline时隐式内联
+	{
+		cout << "I am Derived\n";
+	}
+};
+
+int main()
+{
+	// 此处的虚函数 who()，是通过类（Base）的具体对象（b）来调用的，编译期间就能确定了，所以它可以是内联的，但最终是否内联取决于编译器。 
+	Base b;
+	b.who();
+
+	// 此处的虚函数是通过指针调用的，呈现多态性，需要在运行时期间才能确定，所以不能为内联。  
+	Base *ptr = new Derived();
+	ptr->who();
+
+	// 因为Base有虚析构函数（virtual ~Base() {}），所以 delete 时，会先调用派生类（Derived）析构函数，再调用基类（Base）析构函数，防止内存泄漏。
+	delete ptr;
+	ptr = nullptr;
+
+	system("pause");
+	return 0;
+} 
+```
 
 ## ++i和i++的区别
 1. i++返回原来的值，++i返回加一后的值；
@@ -995,3 +1081,12 @@ public:
 
 [参考2](https://www.cnblogs.com/yc_sunniwell/archive/2010/07/14/1777432.html)
 
+
+
+## [仿函数](https://blog.csdn.net/k346k346/article/details/82818801)
+
+### 什么是仿函数？
+仿函数是一个class或struct，但是实现的是函数的功能；通过重载 `operator()` 运算符来实现；
+
+### 仿函数的作用？
+普通函数A作为函数B的参数传递时，扩展性很差，当修改了函数A的参数数量时，还需要修改函数B的参数；而使用仿函数可以解决这个问题；

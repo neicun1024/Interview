@@ -1090,3 +1090,41 @@ public:
 
 ### 仿函数的作用？
 普通函数A作为函数B的参数传递时，扩展性很差，当修改了函数A的参数数量时，还需要修改函数B的参数；而使用仿函数可以解决这个问题；
+
+## typedef/using/typename的区别
+- typedef：传统的别名定义方式，主要目的是简化复杂类型的声明，比如
+
+	```
+    typedef unsigned long long ull;
+	ull number = 1000000;
+    ```
+- using：比typedef更加直观和灵活，比如
+
+	```
+    using ull = unsigned long long;
+    ```
+
+- typename：主要用于模板中，用于告诉编译器某个标识符是一个类型，而不是变量或函数，当访问一个依赖于模板参数的嵌套类型时，必须用typename消除歧义，比如：
+    ```
+	template<typename T>
+	struct A {
+		using type=typename T::type;	// 必须使用typename
+	};
+    ```
+
+## 协程
+用于减少线程切换的开销，可以暂停后切出去做别的事情，再切回来再恢复后继续跑，全程还是顺序执行，同一时刻只跑一段代码；主要用于IO密集场景，减少回调，常用于状态机、生成器、迭代器；
+
+## C++特性
+- C++11新特性：
+
+    线程和锁（thread、mutex、condition_variable）、future和promise、auto和decltype、范围for、智能指针（shared_ptr、weak_ptr、unique_ptr）、nullptr、constexpr、右值引用、移动语义（move）、完美转发、lambda表达式、变参模版、别名、tuple；
+
+
+- C++17新特性：
+
+    结构化绑定、optional、variant、any、并发（scoped_lock、shared_mutex、shared_lock）；
+
+- C++20新特性：
+
+    Moudules（模块）、Ranges（范围库）、Concepts（概念库）、Coroutines（协程）、lambda支持初始化捕获；

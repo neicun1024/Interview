@@ -66,7 +66,7 @@ services:
 - key-string：一个key对应一个值，是最常用的，一般用于存储一个值
 - key-hash：一个key对应一个map，存储一个对象数据的
 - key-list：一个key对应一个列表，使用list结构实现栈和队列结构
-- key-set：一个key对应一个集合，提供交集、差集和并集的操作
+- key-set：一个key对应一个无序的集合，提供交集、差集和并集的操作
 - key-zset：一个key对应一个有序的集合，适合排行榜，积分存储等操作
 
 ![20220601161158](https://raw.githubusercontent.com/neicun1024/PicBed/main/images_for_markdown/20220601161158.png)
@@ -82,7 +82,7 @@ services:
 
 # 知识总结
 
-Redis是一种内存型键值存储数据库。支持多种数据类型，包括string、list、hash、set、有序set等。
+Redis是一种内存型KV数据库。支持多种数据类型，包括string、list、hash、set、zset等。
 
 ## 核心特点
 1. 内存存储：延迟低
@@ -135,5 +135,5 @@ redis可以监控主从节点是否正常运行，并在出问题时通过API脚
 ## 事务机制
 只能保证部分原子性，要么全都执行，要么全都不执行，有命令失败也不会回滚
 
-## 为什么redis使用哨兵模式而不是raft
-raft是强一致性复制协议，偏CP，而redis追求低延时高吞吐，默认允许最终一致性和少量丢写，偏AP。redis不需要保证多数派提交，不会回滚。
+## 为什么Redis使用哨兵模式而不是Raft
+Raft是强一致性复制协议，偏CP，而Redis追求低延时高吞吐，默认允许最终一致性和少量丢写，偏AP。Redis不需要保证多数派提交，不会回滚。
